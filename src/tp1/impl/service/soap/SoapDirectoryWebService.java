@@ -1,4 +1,4 @@
-package tp1.impl.service.rest.soap;
+package tp1.impl.service.soap;
 
 import java.util.List;
 import java.util.logging.Logger;

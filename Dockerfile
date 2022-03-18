@@ -10,6 +10,4 @@ COPY target/*jar-with-dependencies.jar sd2122.jar
 # copy the file of properties to the docker image
 COPY trab.props trab.props
 
-# run Discovery when starting the docker image
-CMD ["java", "-cp", "/home/sd/sd2122.jar", \
-"sd2122.trab.server.RESTUserServer"]
+CMD ["java", "-cp", "/home/sd/sd2122.jar", "--version"]

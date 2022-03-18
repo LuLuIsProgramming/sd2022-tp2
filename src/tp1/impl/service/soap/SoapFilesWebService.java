@@ -1,4 +1,4 @@
-package tp1.impl.service.rest.soap;
+package tp1.impl.service.soap;
 
 import jakarta.jws.WebService;
 import tp1.api.service.java.Files;

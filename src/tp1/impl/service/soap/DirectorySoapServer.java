@@ -1,4 +1,4 @@
-package tp1.impl.service.rest.soap;
+package tp1.impl.service.soap;
 
 
 import java.util.logging.Level;
@@ -9,13 +9,13 @@ import tp1.impl.discovery.Discovery;
 import util.IP;
 
 
-public class FilesSoapServer {
+public class DirectorySoapServer {
 
-	public static final int PORT = 24567;
-	public static final String SERVICE_NAME = "files";
+	public static final int PORT = 14567;
+	public static final String SERVICE_NAME = "dir";
 	public static String SERVER_BASE_URI = "http://%s:%s/soap";
 
-	private static Logger Log = Logger.getLogger(FilesSoapServer.class.getName());
+	private static Logger Log = Logger.getLogger(DirectorySoapServer.class.getName());
 
 	public static void main(String[] args) throws Exception {
 
@@ -29,7 +29,7 @@ public class FilesSoapServer {
 		String ip = IP.hostAddress();
 		String serverURI = String.format(SERVER_BASE_URI, ip, PORT);
 
-		Endpoint.publish(serverURI, new SoapFilesWebService());
+		Endpoint.publish(serverURI, new SoapDirectoryWebService());
 
 		Discovery.getInstance().announce(SERVICE_NAME, serverURI);
 

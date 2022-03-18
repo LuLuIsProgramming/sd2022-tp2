@@ -7,7 +7,7 @@
 	<version>1.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<authors>xxxxx-yyyyy</authors>
+		<authors>sol</authors>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -57,7 +57,7 @@
 				<configuration>
 					<images>
 						<image>
-							<name>sd2122-tp1-${authors}</name>
+							<name>smduarte/sd2122-tp1-${authors}</name>
 							<build>
 								<dockerFile>${project.basedir}/Dockerfile</dockerFile>
 							</build>

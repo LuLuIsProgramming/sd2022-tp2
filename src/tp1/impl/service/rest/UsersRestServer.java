@@ -1,4 +1,4 @@
-package tp1.impl.service.rest.rest;
+package tp1.impl.service.rest;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,10 +25,9 @@ public class UsersRestServer extends AbstractRestServer {
 	
 	
 	public static void main(String[] args) throws Exception {
-		int port = args.length < 1 ? PORT : Integer.valueOf(args[0]);
 
 		Log.setLevel( Level.ALL );
 		
-		new UsersRestServer(port).start();
+		new UsersRestServer(PORT).start();
 	}	
 }
