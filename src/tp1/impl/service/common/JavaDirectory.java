@@ -6,6 +6,7 @@ import static tp1.api.service.java.Result.ErrorCode.BAD_REQUEST;
 import static tp1.api.service.java.Result.ErrorCode.FORBIDDEN;
 import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,10 +37,9 @@ public class JavaDirectory implements Directory {
 	private static final long USER_CACHE_CAPACITY = 100;
 	private static final long USER_CACHE_EXPIRATION = 120;
 
-//	final String baseUri;
 	final AtomicInteger counter = new AtomicInteger();
 
-	final Map<String, FileInfo> files = new ConcurrentHashMap<>();
+	final Map<String, ExtendedFileInfo> files = new ConcurrentHashMap<>();
 	final Map<String, Set<String>> userFiles = new ConcurrentHashMap<>();
 	final Map<String, Set<String>> userOtherFiles = new ConcurrentHashMap<>();
 
@@ -52,7 +52,6 @@ public class JavaDirectory implements Directory {
 			});
 
 	public JavaDirectory() {
-//		this.baseUri = baseUri;
 	}
 
 	@Override
@@ -63,24 +62,25 @@ public class JavaDirectory implements Directory {
 		if (badParam(password) || wrongPassword(userId, password))
 			return error(FORBIDDEN);
 
-		FileInfo info;
+		ExtendedFileInfo file;
 		synchronized (files) {
 			var fileId = fileId(filename, userId);
 
-			info = files.get( fileId );
-			if( info == null ) {
-				info = new FileInfo();
+			file = files.get( fileId );
+			if( file == null ) {
+				var uri = FilesClientFactory.randomServerURI();
+				var info = new FileInfo();
 				info.setOwner(userId);
 				info.setFilename(filename);
 				info.setSharedWith(ConcurrentHashMap.newKeySet());
-				var uri = FilesClientFactory.randomServerURI();
 				info.setFileURL(String.format("%s/%s", uri, fileId));
-				files.put(fileId, info);
+				
+				files.put(fileId, file = new ExtendedFileInfo(uri, fileId, info));
+				
 				userFiles.computeIfAbsent(userId, (k) -> ConcurrentHashMap.newKeySet()).add(fileId);
 			}
-			//TODO
-			FilesClientFactory.get().writeFile(fileId, data, password);
-			return ok(info);
+			FilesClientFactory.getByUri(file.uri()).writeFile(fileId, data, password);
+			return ok(file.info());
 		}
 	}
 
@@ -91,19 +91,19 @@ public class JavaDirectory implements Directory {
 
 		var fileId = fileId(filename, userId);
 
-		var info = files.get(filename);
+		var file = files.get(filename);
 
 		if (fileId == null)
 			return error(NOT_FOUND);
 
-		if (badParam(password) || wrongPassword(info.getOwner(), password))
+		if (badParam(password) || wrongPassword(file.info().getOwner(), password))
 			return error(FORBIDDEN);
 
 		else {
 			files.remove(fileId);
 			userFiles.computeIfAbsent(userId, (k) -> ConcurrentHashMap.newKeySet()).remove(fileId);
 			executor.execute(() -> {
-				info.getSharedWith().forEach( u -> {
+				file.info().getSharedWith().forEach( u -> {
 					userOtherFiles.remove( fileId );
 				});
 				FilesClientFactory.get().deleteFile(fileId, password);
@@ -119,15 +119,15 @@ public class JavaDirectory implements Directory {
 
 		var fileId = fileId(filename, userId);
 
-		var info = files.get(fileId);
-		if (info == null)
+		var file = files.get(fileId);
+		if (file == null)
 			return error(NOT_FOUND);
 
-		if (badParam(password) || wrongPassword(info.getOwner(), password))
+		if (badParam(password) || wrongPassword(file.info().getOwner(), password))
 			return error(FORBIDDEN);
 
-		synchronized( info ) {
-			info.getSharedWith().add(userIdShare);
+		synchronized( file ) {
+			file.info().getSharedWith().add(userIdShare);
 			userOtherFiles.compute(userIdShare, (k,v) -> ConcurrentHashMap.newKeySet()).add(fileId);
 		}
 
@@ -141,15 +141,15 @@ public class JavaDirectory implements Directory {
 
 		var fileId = fileId(filename, userId);
 
-		var info = files.get(fileId);
-		if (info == null)
+		var file = files.get(fileId);
+		if (file == null)
 			return error(NOT_FOUND);
 
-		if (badParam(password) || wrongPassword(info.getOwner(), password))
+		if (badParam(password) || wrongPassword(file.info().getOwner(), password))
 			return error(FORBIDDEN);
 
-		synchronized(info) {
-			info.getSharedWith().remove(userIdShare);			
+		synchronized(file) {
+			file.info().getSharedWith().remove(userIdShare);			
 			userOtherFiles.compute(userIdShare, (k,v) -> ConcurrentHashMap.newKeySet()).remove(fileId);
 		}
 
@@ -163,12 +163,12 @@ public class JavaDirectory implements Directory {
 
 		var fileId = fileId(filename, userId);
 
-		var info = files.get(fileId);
+		var file = files.get(fileId);
 
-		if (info == null || getUser(userId) == null || getUser(accUserId) == null)
+		if (file == null || getUser(userId) == null || getUser(accUserId) == null)
 			return error(NOT_FOUND);
 
-		if (badParam(password) || wrongPassword(accUserId, password) || !info.hasAccess(accUserId))
+		if (badParam(password) || wrongPassword(accUserId, password) || !file.info().hasAccess(accUserId))
 			return error(FORBIDDEN);
 		else
 			return FilesClientFactory.get().getFile(fileId, password);
@@ -188,7 +188,7 @@ public class JavaDirectory implements Directory {
 
 		var f1 = userFiles.getOrDefault(userId, Collections.emptySet());
 		var f2 = userOtherFiles.getOrDefault(userId, Collections.emptySet());
-		var infos = Stream.concat( f1.stream(), f2.stream()).map( files::get ).collect( Collectors.toSet());
+		var infos = Stream.concat( f1.stream(), f2.stream()).map( f -> files.get(f).info() ).collect( Collectors.toSet());
 		return ok( new ArrayList<>(infos) );
 	}
 
@@ -212,5 +212,9 @@ public class JavaDirectory implements Directory {
 	private boolean wrongPassword(String userId, String password) {
 		var user = getUser(userId);
 		return user == null || !user.getPassword().equals(password);
+	}
+	
+	static record ExtendedFileInfo(URI uri, String fileId, FileInfo info) {
+		
 	}
 }
