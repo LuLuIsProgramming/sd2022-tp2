@@ -2,9 +2,6 @@ package tp1.impl.service.common;
 
 import static tp1.api.service.java.Result.error;
 import static tp1.api.service.java.Result.ok;
-import static tp1.api.service.java.Result.ErrorCode.BAD_REQUEST;
-import static tp1.api.service.java.Result.ErrorCode.CONFLICT;
-import static tp1.api.service.java.Result.ErrorCode.FORBIDDEN;
 import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
 
 import java.io.File;
