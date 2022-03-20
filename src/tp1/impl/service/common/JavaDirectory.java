@@ -202,7 +202,7 @@ public class JavaDirectory implements Directory {
 	}
 
 	private String fileId(String filename, String userId) {
-		return userId + "-" + filename;
+		return userId + "/" + filename;
 	}
 
 	private boolean badParam(String str) {
