@@ -25,5 +25,10 @@ public class RetryFilesClient extends RetryClient implements Files {
 	public Result<Void> writeFile(String fileId, byte[] data, String token) {
 		return reTry( () -> writeFile(fileId, data, token));
 	}
+
+	@Override
+	public Result<Void> deleteUserFiles(String userId, String token) {
+		return reTry( () -> impl.deleteUserFiles(userId, token));
+	}
 	
 }

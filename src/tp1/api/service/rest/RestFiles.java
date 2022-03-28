@@ -69,4 +69,10 @@ public interface RestFiles {
 	byte[] getFile(@PathParam("fileId") String fileId, 
 			@QueryParam("token") @DefaultValue("") String token);
 
+	
+	@DELETE
+	@Path("/user/{userId}")
+	void deleteUserFiles(@PathParam("userId") String userId, 
+			@QueryParam("token") @DefaultValue("") String token);
+
 }

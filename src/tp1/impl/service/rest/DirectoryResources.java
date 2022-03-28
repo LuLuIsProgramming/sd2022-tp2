@@ -46,4 +46,9 @@ public class DirectoryResources extends RestResource implements RestDirectory {
 	public List<FileInfo> lsFile(String userId, String password) {
 		return super.resultOrThrow( impl.lsFile(userId, password));
 	}
+
+	@Override
+	public void deleteUserFiles(String userId, String token) {
+		super.resultOrThrow(impl.deleteUserFiles(userId, token));
+	}
 }

@@ -21,6 +21,7 @@ public class UsersRestServer extends AbstractRestServer {
 	void registerResources(ResourceConfig config) {
 		config.register( UsersResources.class ); 
 		config.register( CustomLoggingFilter.class);
+		config.register( GenericExceptionMapper.class);
 	}
 	
 	

@@ -4,6 +4,7 @@ import java.util.*;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -142,9 +143,13 @@ public interface RestDirectory {
 	@GET
 	@Path("/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	List<FileInfo> lsFile(@PathParam("userId") String userId, 
-			@QueryParam("password") String password);
+	List<FileInfo> lsFile(@PathParam("userId") String userId, @QueryParam("password") String password);
 
 
+	
+	@DELETE
+	@Path("/user/{userId}")
+	void deleteUserFiles(@PathParam("userId") String userId, 
+			@QueryParam("token") @DefaultValue("") String token);
 
 }

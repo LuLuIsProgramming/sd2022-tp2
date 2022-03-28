@@ -13,6 +13,9 @@ import tp1.api.service.rest.RestFiles;
 
 public class RestFilesClient extends RestClient implements Files {
 
+
+	private static final String USER = "user";
+
 	public RestFilesClient(URI serverUri) {
 		super(serverUri, RestFiles.PATH);
 	}
@@ -40,6 +43,15 @@ public class RestFilesClient extends RestClient implements Files {
 		Response r = target.path(fileId)
 				.request()
 				.post(Entity.entity(data, MediaType.APPLICATION_OCTET_STREAM));
+		
+		return super.verifyResponse(r, Status.OK);
+	}
+
+	@Override
+	public Result<Void> deleteUserFiles(String userId, String token) {
+		Response r = target.path(USER).path(userId)
+				.request()
+				.delete();
 		
 		return super.verifyResponse(r, Status.OK);
 	}

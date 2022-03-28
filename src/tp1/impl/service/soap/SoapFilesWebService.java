@@ -38,4 +38,9 @@ public class SoapFilesWebService implements SoapFiles {
 	public void writeFile(String fileId, byte[] data, String token) throws FilesException {
 		resultOrThrow( impl.writeFile(fileId, data, token));
 	}
+
+	@Override
+	public void deleteUserFiles(String userId, String token) throws FilesException {
+		resultOrThrow( impl.deleteUserFiles(userId, token));
+	}
 }

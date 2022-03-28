@@ -3,8 +3,12 @@ package tp1.impl.service.common;
 import static tp1.api.service.java.Result.error;
 import static tp1.api.service.java.Result.ok;
 import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
+import static tp1.api.service.java.Result.ErrorCode.INTERNAL_ERROR;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Comparator;
 
 import tp1.api.service.java.Files;
 import tp1.api.service.java.Result;
@@ -33,7 +37,26 @@ public class JavaFiles implements Files {
 
 	@Override
 	public Result<Void> writeFile(String fileId, byte[] data, String token) {
-		IO.write( new File(rootDir + fileId), data);
+		File file = new File(rootDir + fileId);
+		file.getParentFile().mkdirs();
+		IO.write( file, data);
 		return ok();
-	}	
+	}
+
+	@Override
+	public Result<Void> deleteUserFiles(String userId, String token) {
+		File file = new File(rootDir + userId);
+		try {
+			java.nio.file.Files.walk(file.toPath())
+			.sorted(Comparator.reverseOrder())
+			.map(Path::toFile)
+			.forEach(File::delete);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return error(INTERNAL_ERROR);
+		}
+		return ok();
+	}
+	
+	
 }

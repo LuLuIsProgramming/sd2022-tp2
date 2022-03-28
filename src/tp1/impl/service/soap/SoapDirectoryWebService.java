@@ -63,4 +63,9 @@ public class SoapDirectoryWebService implements SoapDirectory {
 	public List<FileInfo> lsFile(String userId, String password) throws DirectoryException {
 		return resultOrThrow( impl.lsFile(userId, password));
 	}
+
+	@Override
+	public void deleteUserFiles(String userId, String token) throws DirectoryException {
+		resultOrThrow( impl.deleteUserFiles( userId, token));
+	}
 }

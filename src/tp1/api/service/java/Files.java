@@ -8,4 +8,6 @@ public interface Files {
 	
 	Result<Void> writeFile(String fileId, byte[] data, String token);
 
+	Result<Void> deleteUserFiles(String userId, String token);
+
 }

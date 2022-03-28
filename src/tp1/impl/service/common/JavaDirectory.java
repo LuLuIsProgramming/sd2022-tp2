@@ -214,7 +214,15 @@ public class JavaDirectory implements Directory {
 		return user == null || !user.getPassword().equals(password);
 	}
 	
-	static record ExtendedFileInfo(URI uri, String fileId, FileInfo info) {
-		
+	static record ExtendedFileInfo(URI uri, String fileId, FileInfo info) {		
+	}
+
+	@Override
+	public Result<Void> deleteUserFiles(String userId, String token) {
+		userOtherFiles.remove(userId);
+		var fs = userFiles.remove( userId );
+		if( fs != null )
+			files.keySet().removeAll(fs);
+		return ok();
 	}
 }

@@ -17,4 +17,6 @@ public interface Directory {
 	Result<byte[]> getFile(String filename,  String userId, String accUserId, String password);
 
 	Result<List<FileInfo>> lsFile(String userId, String password);
+	
+	Result<Void> deleteUserFiles(String userId, String token);
 }

@@ -96,7 +96,7 @@ public class JavaUsers implements Users {
 			.stream()
 			.filter( u -> u.getFullName().toLowerCase().contains(pattern.toLowerCase()) )
 			.map( User::secureCopy )
-			.collect( Collectors.toList() );
+			.toList();
 		
 		return ok(hits);
 	}

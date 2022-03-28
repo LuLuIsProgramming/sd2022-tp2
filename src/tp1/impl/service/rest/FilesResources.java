@@ -29,4 +29,9 @@ public class FilesResources extends RestResource implements RestFiles {
 	public byte[] getFile(String fileId, String token) {
 		return resultOrThrow( impl.getFile(fileId, token));
 	}
+
+	@Override
+	public void deleteUserFiles(String userId, String token) {
+		super.resultOrThrow( impl.deleteUserFiles(userId, token));
+	}
 }
