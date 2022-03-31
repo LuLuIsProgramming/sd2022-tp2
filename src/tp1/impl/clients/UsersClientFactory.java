@@ -2,16 +2,14 @@ package tp1.impl.clients;
 
 import java.net.URI;
 
-import tp1.impl.clients.rest.RestUsersClient;
-import tp1.impl.clients.soap.SoapUsersClient;
-
-import tp1.impl.clients.common.RetryUsersClient;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import tp1.api.service.java.Users;
+import tp1.impl.clients.common.RetryUsersClient;
+import tp1.impl.clients.rest.RestUsersClient;
+import tp1.impl.clients.soap.SoapUsersClient;
 import tp1.impl.discovery.Discovery;
 
 public class UsersClientFactory {

@@ -130,6 +130,7 @@ public class Discovery {
 			try {
 				ms.joinGroup(DISCOVERY_ADDR, xface);
 			} catch (Exception x) {
+				System.err.println( xface);
 				x.printStackTrace();
 			}
 		}

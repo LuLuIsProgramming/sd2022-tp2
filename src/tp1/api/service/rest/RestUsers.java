@@ -1,6 +1,6 @@
 package tp1.api.service.rest;
 
-import java.util.*;
+import java.util.List;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -94,4 +94,14 @@ public interface RestUsers {
 	@Produces(MediaType.APPLICATION_JSON)
 	List<User> searchUsers(@QueryParam("query") String pattern);
 
+	/*
+	 * Extended Users Service.
+	 * 
+	 * Operations intended to be used among servers...
+	 * 
+	 * */
+	@GET
+	@Path("/{userId}/x")
+	@Produces(MediaType.APPLICATION_JSON)
+	User fetchUser(@PathParam("userId") String userId, @QueryParam("token") String token);
 }

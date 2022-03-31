@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import tp1.api.service.java.Files;
 import tp1.api.service.java.Result;
+import tp1.api.service.java.Result.ErrorCode;
 import tp1.api.service.rest.RestFiles;
 
 public class RestFilesClient extends RestClient implements Files {
@@ -22,11 +23,7 @@ public class RestFilesClient extends RestClient implements Files {
 	
 	@Override
 	public Result<byte[]> getFile(String fileId, String token) {
-		Response r = target.path(fileId)
-				.request()
-				.accept(MediaType.APPLICATION_JSON)
-				.get();				
-		return super.responseContents(r, Status.OK, new GenericType<byte[]>() {});
+		return Result.error( ErrorCode.NOT_IMPLEMENTED );
 	}
 
 	@Override
@@ -54,6 +51,16 @@ public class RestFilesClient extends RestClient implements Files {
 				.delete();
 		
 		return super.verifyResponse(r, Status.OK);
+	}
+
+	@Override
+	public Result<byte[]> getUrl(String url, String token) {
+		var r = client.target( url )
+				.request()
+				.accept( MediaType.APPLICATION_OCTET_STREAM )
+				.get();
+		System.err.println( r );
+		return super.responseContents(r, Status.OK, new GenericType<byte[]>() {});
 	}
 
 }

@@ -135,11 +135,6 @@
 				<version>3.0.2</version>
 			</dependency>
 			<dependency>
-				<groupId>sd2122</groupId>
-				<artifactId>sd2122-tp</artifactId>
-				<version>1.0</version>
-			</dependency>
-			<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>31.1-jre</version>

@@ -59,4 +59,11 @@ public class UsersResources extends RestResource implements RestUsers {
 		
 		return resultOrThrow( impl.searchUsers(pattern));
 	}
+
+	@Override
+	public User fetchUser(String userId, String token) {
+		Log.info(String.format("REST fetchUser: userId = %s", userId));
+		
+		return resultOrThrow( impl.fetchUser(userId, token));
+	}
 }

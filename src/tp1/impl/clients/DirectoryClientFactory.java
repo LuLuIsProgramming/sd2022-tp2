@@ -8,11 +8,10 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import tp1.api.service.java.Directory;
-import tp1.impl.discovery.Discovery;
-
+import tp1.impl.clients.common.RetryDirectoryClient;
 import tp1.impl.clients.rest.RestDirectoryClient;
 import tp1.impl.clients.soap.SoapDirectoryClient;
-import tp1.impl.clients.common.RetryDirectoryClient;
+import tp1.impl.discovery.Discovery;
 
 public class DirectoryClientFactory {
 	static private Random rg = new Random();

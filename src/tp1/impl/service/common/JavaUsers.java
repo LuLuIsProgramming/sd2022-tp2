@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import tp1.api.User;
 import tp1.api.service.java.Result;
 import tp1.api.service.java.Users;
+import tp1.impl.clients.DirectoryClientFactory;
 
 public class JavaUsers implements Users {
 	final protected Map<String, User> users = new ConcurrentHashMap<>();
@@ -81,7 +81,8 @@ public class JavaUsers implements Users {
 		else {
 			users.remove( userId);
 			executor.execute(()->{
-				// TODO Remove files...
+				var res = DirectoryClientFactory.get().deleteUserFiles(userId, "");				
+				System.err.println( res );
 			});
 			return ok(user);
 		}
@@ -102,7 +103,7 @@ public class JavaUsers implements Users {
 	}
 
 	@Override
-	public Result<User> fetchUser(String userId) {
+	public Result<User> fetchUser(String userId, String token) {
 		if( badParam(userId))
 			return error( BAD_REQUEST );
 		

@@ -35,7 +35,7 @@ public class SoapDirectoryWebService implements SoapDirectory {
 	@Override
 	public FileInfo writeFile(String filename, byte[] data, String userId, String password) throws DirectoryException {
 		return resultOrThrow( impl.writeFile(filename, data, userId, password));
-	};
+	}
 
 	@Override
 	public void deleteFile(String filename, String userId, String password) throws DirectoryException {
@@ -65,7 +65,7 @@ public class SoapDirectoryWebService implements SoapDirectory {
 	}
 
 	@Override
-	public void deleteUserFiles(String userId, String token) throws DirectoryException {
-		resultOrThrow( impl.deleteUserFiles( userId, token));
+	public List<String> deleteUserFiles(String userId, String token) throws DirectoryException {
+		return resultOrThrow( impl.deleteUserFiles( userId, token));
 	}
 }

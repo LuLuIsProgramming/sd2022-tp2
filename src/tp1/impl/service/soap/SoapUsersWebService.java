@@ -69,8 +69,8 @@ public class SoapUsersWebService implements SoapUsers {
 
 	
 	@Override
-	public User fetchUser(String userId) throws UsersException {
+	public User fetchUser(String userId, String token) throws UsersException {
 		Log.info(String.format("SOAP fetchUser: pattern = %s", userId));
-		return resultOrThrow( impl.fetchUser(userId));
+		return resultOrThrow( impl.fetchUser(userId, token));
 	}
 }

@@ -7,7 +7,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 public class FilesRestServer extends AbstractRestServer {
 	public static final int PORT = 5678;
-	public static final String SERVICE_NAME = "dir";
+	public static final String SERVICE_NAME = "files";
 	
 	private static Logger Log = Logger.getLogger(FilesRestServer.class.getName());
 

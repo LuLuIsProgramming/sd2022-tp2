@@ -60,7 +60,7 @@ public class SoapUsersClient extends SoapClient implements Users {
 	}
 
 	@Override
-	public Result<User> fetchUser(String userId) {
-		return super.tryCatchResult(() -> impl().fetchUser(userId));
+	public Result<User> fetchUser(String userId, String token) {
+		return super.tryCatchResult(() -> impl().fetchUser(userId, token));
 	}
 }

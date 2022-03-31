@@ -4,7 +4,6 @@ import java.util.List;
 
 import tp1.api.FileInfo;
 import tp1.api.service.java.Directory;
-import tp1.api.service.java.Files;
 import tp1.api.service.java.Result;
 
 public class RetryDirectoryClient extends RetryClient implements Directory {
@@ -47,7 +46,7 @@ public class RetryDirectoryClient extends RetryClient implements Directory {
 	}
 
 	@Override
-	public Result<Void> deleteUserFiles(String userId, String token) {
+	public Result<List<String>> deleteUserFiles(String userId, String token) {
 		return super.reTry( ()-> impl.deleteUserFiles(userId, token));
 	}
 	

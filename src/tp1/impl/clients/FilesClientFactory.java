@@ -8,11 +8,10 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import tp1.api.service.java.Files;
-import tp1.impl.discovery.Discovery;
-
+import tp1.impl.clients.common.RetryFilesClient;
 import tp1.impl.clients.rest.RestFilesClient;
 import tp1.impl.clients.soap.SoapFilesClient;
-import tp1.impl.clients.common.RetryFilesClient;
+import tp1.impl.discovery.Discovery;
 
 public class FilesClientFactory {
 	static private Random rg = new Random();

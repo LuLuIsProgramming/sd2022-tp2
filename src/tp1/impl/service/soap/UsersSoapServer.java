@@ -34,4 +34,10 @@ public class UsersSoapServer {
 
 		Log.info(String.format("%s Soap Server ready @ %s\n", SERVICE_NAME, serverURI));
 	}
+	
+	static {
+		System.setProperty("java.net.preferIPv4Stack", "true");
+		System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s: %5$s");
+	}
+
 }

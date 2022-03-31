@@ -9,6 +9,7 @@ import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +48,7 @@ public class JavaDirectory implements Directory {
 			.expireAfterWrite(USER_CACHE_EXPIRATION, TimeUnit.SECONDS).build(new CacheLoader<>() {
 				@Override
 				public User load(String userId) throws Exception {
-					return UsersClientFactory.get().fetchUser(userId).value();
+					return UsersClientFactory.get().fetchUser(userId, "").value();
 				}
 			});
 
@@ -73,7 +74,7 @@ public class JavaDirectory implements Directory {
 				info.setOwner(userId);
 				info.setFilename(filename);
 				info.setSharedWith(ConcurrentHashMap.newKeySet());
-				info.setFileURL(String.format("%s/%s", uri, fileId));
+				info.setFileURL(String.format("%s/files/%s", uri, fileId));
 				
 				files.put(fileId, file = new ExtendedFileInfo(uri, fileId, info));
 				
@@ -100,12 +101,11 @@ public class JavaDirectory implements Directory {
 			return error(FORBIDDEN);
 
 		else {
-			files.remove(fileId);
-			userFiles.computeIfAbsent(userId, (k) -> ConcurrentHashMap.newKeySet()).remove(fileId);
+			
+			var info = files.remove(fileId);
+			userFiles.getOrDefault(userId, Collections.emptySet()).remove(fileId);
 			executor.execute(() -> {
-				file.info().getSharedWith().forEach( u -> {
-					userOtherFiles.remove( fileId );
-				});
+				this.removeSharesOfFile(info);
 				FilesClientFactory.get().deleteFile(fileId, password);
 			});
 			return ok();
@@ -157,7 +157,7 @@ public class JavaDirectory implements Directory {
 	}
 
 	@Override
-	public Result<byte[]> getFile(String filename, String userId, String accUserId, String password) {
+	public Result<FileInfo> getFileInfo(String filename, String userId, String accUserId, String password) {
 		if (badParam(filename) || badParam(userId) || badParam(accUserId))
 			return error(BAD_REQUEST);
 
@@ -171,9 +171,20 @@ public class JavaDirectory implements Directory {
 		if (badParam(password) || wrongPassword(accUserId, password) || !file.info().hasAccess(accUserId))
 			return error(FORBIDDEN);
 		else
-			return FilesClientFactory.get().getFile(fileId, password);
+			return ok(file.info());
 	}
 
+	@Override
+	public Result<byte[]> getFile(String filename, String userId, String accUserId, String password) {
+		var file = getFileInfo(filename, userId, accUserId, password);
+		if( file.isOK() ) {
+			var x = FilesClientFactory.get().getUrl( file.value().getFileURL(), password);
+			return x;
+		}
+		else
+			return error( file.error() );
+	}
+	
 	@Override
 	public Result<List<FileInfo>> lsFile(String userId, String password) {
 		if (badParam(userId) )
@@ -202,7 +213,7 @@ public class JavaDirectory implements Directory {
 	}
 
 	private String fileId(String filename, String userId) {
-		return userId + "/" + filename;
+		return userId + JavaFiles.DELIMITER + filename;
 	}
 
 	private boolean badParam(String str) {
@@ -214,15 +225,31 @@ public class JavaDirectory implements Directory {
 		return user == null || !user.getPassword().equals(password);
 	}
 	
-	static record ExtendedFileInfo(URI uri, String fileId, FileInfo info) {		
-	}
 
 	@Override
-	public Result<Void> deleteUserFiles(String userId, String token) {
-		userOtherFiles.remove(userId);
-		var fs = userFiles.remove( userId );
-		if( fs != null )
-			files.keySet().removeAll(fs);
-		return ok();
+	public Result<List<String>> deleteUserFiles(String userId, String token) {
+		var result = new HashSet<String>();
+		
+		var fileIds = userFiles.remove(userId);
+		if( fileIds != null )
+			for( var id : fileIds ) {
+				var file = files.remove( id );
+				removeSharesOfFile( file );
+				
+				
+				var url = file.info().getFileURL();
+				var idx = url.lastIndexOf('/');
+				result.add( url.substring(0, idx));
+			}
+		return ok(new ArrayList<>(result));
+	}
+	
+	
+	private void removeSharesOfFile( ExtendedFileInfo file) {
+		for( var userId : file.info().getSharedWith())
+			userOtherFiles.getOrDefault(userId, Collections.emptySet()).remove( file.fileId());
+	}
+	
+	static record ExtendedFileInfo(URI uri, String fileId, FileInfo info) {		
 	}
 }

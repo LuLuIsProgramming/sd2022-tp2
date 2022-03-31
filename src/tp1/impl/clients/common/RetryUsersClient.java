@@ -41,7 +41,7 @@ public class RetryUsersClient extends RetryClient implements Users {
 	}
 
 	@Override
-	public Result<User> fetchUser(String userId) {
-		return reTry( () -> impl.fetchUser(userId));		
+	public Result<User> fetchUser(String userId, String token) {
+		return reTry( () -> impl.fetchUser(userId, token));		
 	}
 }

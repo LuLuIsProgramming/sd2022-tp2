@@ -2,8 +2,9 @@ package tp1.impl.service.common;
 
 import static tp1.api.service.java.Result.error;
 import static tp1.api.service.java.Result.ok;
-import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
 import static tp1.api.service.java.Result.ErrorCode.INTERNAL_ERROR;
+import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
+import static tp1.api.service.java.Result.ErrorCode.NOT_IMPLEMENTED;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,8 @@ import util.IO;
 
 public class JavaFiles implements Files {
 
+	static final String DELIMITER = "$$$";
+	
 	final String rootDir;
 	
 	public JavaFiles( String rootDir ) {
@@ -25,18 +28,21 @@ public class JavaFiles implements Files {
 
 	@Override
 	public Result<byte[]> getFile(String fileId, String token) {
+		fileId = fileId.replace( DELIMITER, "/");
 		byte[] data = IO.read( new File( rootDir + fileId ));
 		return data != null ? ok( data) : error( NOT_FOUND );
 	}
 
 	@Override
 	public Result<Void> deleteFile(String fileId, String token) {
+		fileId = fileId.replace( DELIMITER, "/");
 		boolean res = IO.delete( new File( rootDir + fileId ));	
 		return res ? ok() : error( NOT_FOUND );
 	}
 
 	@Override
 	public Result<Void> writeFile(String fileId, byte[] data, String token) {
+		fileId = fileId.replace( DELIMITER, "/");
 		File file = new File(rootDir + fileId);
 		file.getParentFile().mkdirs();
 		IO.write( file, data);
@@ -57,6 +63,9 @@ public class JavaFiles implements Files {
 		}
 		return ok();
 	}
-	
-	
+
+	@Override
+	public Result<byte[]> getUrl(String url, String token) {
+		return error( NOT_IMPLEMENTED );
+	}	
 }

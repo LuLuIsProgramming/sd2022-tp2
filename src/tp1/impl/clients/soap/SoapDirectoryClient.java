@@ -9,7 +9,6 @@ import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Service;
 import tp1.api.FileInfo;
 import tp1.api.service.java.Directory;
-import tp1.api.service.java.Files;
 import tp1.api.service.java.Result;
 import tp1.api.service.soap.SoapDirectory;
 import tp1.api.service.soap.SoapFiles;
@@ -78,10 +77,7 @@ private SoapDirectory impl;
 
 
 	@Override
-	public Result<Void> deleteUserFiles(String userId, String token) {
+	public Result<List<String>> deleteUserFiles(String userId, String token) {
 		return super.tryCatchVoid(() -> impl().deleteUserFiles(userId, token));
 	}
-
-
-	
 }

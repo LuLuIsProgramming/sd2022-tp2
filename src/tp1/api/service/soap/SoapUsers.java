@@ -57,5 +57,5 @@ public interface SoapUsers {
 
 	
 	@WebMethod
-	User fetchUser( String userId ) throws UsersException ;
+	User fetchUser( String userId, String token ) throws UsersException ;
 }

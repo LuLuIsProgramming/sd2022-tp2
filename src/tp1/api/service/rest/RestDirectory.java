@@ -34,7 +34,7 @@ public interface RestDirectory {
 	 *		   404 if the userId does not exist.
 	 *         403 if the password is incorrect.
 	 * 		   400 otherwise.
-	 */
+	 */	
 	@POST
 	@Path("/{userId}/{filename}")
 	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
@@ -149,7 +149,8 @@ public interface RestDirectory {
 	
 	@DELETE
 	@Path("/user/{userId}")
-	void deleteUserFiles(@PathParam("userId") String userId, 
+	@Produces(MediaType.APPLICATION_JSON)
+	List<String> deleteUserFiles(@PathParam("userId") String userId, 
 			@QueryParam("token") @DefaultValue("") String token);
 
 }

@@ -17,6 +17,7 @@ public class RestUsersClient extends RestClient implements Users {
 	private static final String EXT = "/x";
 	private static final String PASSWORD = "password";
 	private static final String QUERY = "query";
+	private static final String TOKEN = "token";
 
 	public RestUsersClient(URI serverUri) {
 		super(serverUri, RestUsers.PATH);
@@ -75,8 +76,9 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	@Override
-	public Result<User> fetchUser(String userId) {
+	public Result<User> fetchUser(String userId, String token) {
 		Response r = target.path(userId).path(EXT)
+					.queryParam(TOKEN, token)
 					.request()
 					.accept(MediaType.APPLICATION_JSON)
 					.get();

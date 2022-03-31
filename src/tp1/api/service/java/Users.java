@@ -16,6 +16,6 @@ public interface Users {
 	
 	Result<List<User>> searchUsers(String pattern);
 		
-	Result<User> fetchUser( String userId );
+	Result<User> fetchUser( String userId, String token );
 	
 }

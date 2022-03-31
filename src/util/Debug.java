@@ -6,7 +6,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Debug {
-
 	public static String SD2122 = "sd2122";
 			
 	static {
@@ -23,4 +22,5 @@ public class Debug {
 		}
 
 	}
+	
 }

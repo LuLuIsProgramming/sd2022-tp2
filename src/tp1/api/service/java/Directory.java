@@ -3,6 +3,7 @@ package tp1.api.service.java;
 import java.util.List;
 
 import tp1.api.FileInfo;
+import tp1.api.service.java.Result.ErrorCode;
 
 public interface Directory {
 
@@ -18,5 +19,9 @@ public interface Directory {
 
 	Result<List<FileInfo>> lsFile(String userId, String password);
 	
-	Result<Void> deleteUserFiles(String userId, String token);
+	Result<List<String>> deleteUserFiles(String userId, String token);
+	
+	default Result<FileInfo> getFileInfo(String filename,  String userId, String accUserId, String password) {
+		return Result.error( ErrorCode.NOT_IMPLEMENTED);
+	}
 }
