@@ -1,5 +1,7 @@
 package tp1.impl.clients;
 
+import static tp1.impl.service.rest.DirectoryRestServer.SERVICE_NAME;
+
 import java.net.URI;
 import java.util.Random;
 
@@ -12,11 +14,13 @@ import tp1.impl.clients.common.RetryDirectoryClient;
 import tp1.impl.clients.rest.RestDirectoryClient;
 import tp1.impl.clients.soap.SoapDirectoryClient;
 import tp1.impl.discovery.Discovery;
+import tp1.impl.service.rest.DirectoryRestServer;
 
 public class DirectoryClientFactory {
 	static private Random rg = new Random();
 	
-	private static final String SERVICE = "dir";
+	private static final String SERVICE = DirectoryRestServer.SERVICE_NAME;
+	
 	private static final String REST = "/rest";
 	private static final String SOAP = "/soap";
 
@@ -39,7 +43,7 @@ public class DirectoryClientFactory {
 			});
 
 	public static Directory get()  {
-		URI[] uris = Discovery.getInstance().findUrisOf(SERVICE, 1);
+		URI[] uris = Discovery.getInstance().findUrisOf(SERVICE_NAME, 1);
 		return getByUri(uris[0]);
 	}
 
