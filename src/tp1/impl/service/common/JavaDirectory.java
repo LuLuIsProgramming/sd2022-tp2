@@ -60,6 +60,9 @@ public class JavaDirectory implements Directory {
 		if (badParam(filename) || badParam(userId))
 			return error(BAD_REQUEST);
 
+		if( getUser(userId) == null )
+			return error(NOT_FOUND);
+		
 		if (badParam(password) || wrongPassword(userId, password))
 			return error(FORBIDDEN);
 
