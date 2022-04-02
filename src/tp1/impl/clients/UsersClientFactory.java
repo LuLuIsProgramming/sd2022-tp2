@@ -13,7 +13,7 @@ import tp1.impl.clients.soap.SoapUsersClient;
 import tp1.impl.discovery.Discovery;
 
 public class UsersClientFactory {
-	private static final String SERVICE = "users";
+	private static final String SERVICE_NAME = "users";
 	private static final String REST = "/rest";
 	private static final String SOAP = "/soap";
 
@@ -36,7 +36,7 @@ public class UsersClientFactory {
 			});
 
 	public static Users get()  {
-		URI[] uris = Discovery.getInstance().findUrisOf(SERVICE, 1);
+		URI[] uris = Discovery.getInstance().findUrisOf(SERVICE_NAME, 1);
 		return getByUri(uris[0].toString());
 	}
 
