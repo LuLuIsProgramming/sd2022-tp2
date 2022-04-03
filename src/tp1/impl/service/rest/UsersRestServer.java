@@ -20,14 +20,14 @@ public class UsersRestServer extends AbstractRestServer {
 	@Override
 	void registerResources(ResourceConfig config) {
 		config.register( UsersResources.class ); 
-		config.register( CustomLoggingFilter.class);
 		config.register( GenericExceptionMapper.class);
+//		config.register( CustomLoggingFilter.class);
 	}
 	
 	
 	public static void main(String[] args) throws Exception {
 
-		Log.setLevel( Level.ALL );
+		Log.setLevel( Level.INFO );
 		
 		new UsersRestServer(PORT).start();
 	}	
