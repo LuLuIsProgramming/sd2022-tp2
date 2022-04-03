@@ -95,9 +95,9 @@ public class JavaDirectory implements Directory {
 
 		var fileId = fileId(filename, userId);
 
-		var file = files.get(filename);
+		var file = files.get(fileId);
 
-		if (fileId == null)
+		if (file == null)
 			return error(NOT_FOUND);
 
 		if (badParam(password) || wrongPassword(file.info().getOwner(), password))
