@@ -58,9 +58,4 @@ public class SoapUsersClient extends SoapClient implements Users {
 	public Result<List<User>> searchUsers(String pattern) {
 		return super.tryCatchResult(() -> impl().searchUsers(pattern));
 	}
-
-	@Override
-	public Result<User> fetchUser(String userId, String token) {
-		return super.tryCatchResult(() -> impl().fetchUser(userId, token));
-	}
 }

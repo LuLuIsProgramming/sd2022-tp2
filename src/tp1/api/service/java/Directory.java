@@ -19,9 +19,9 @@ public interface Directory {
 
 	Result<List<FileInfo>> lsFile(String userId, String password);
 	
-	Result<List<String>> deleteUserFiles(String userId, String token);
-	
 	default Result<FileInfo> getFileInfo(String filename,  String userId, String accUserId, String password) {
 		return Result.error( ErrorCode.NOT_IMPLEMENTED);
 	}
+	
+	Result<Void> deleteUserFiles(String userId, String password, String token);
 }

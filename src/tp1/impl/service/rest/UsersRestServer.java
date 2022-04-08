@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
+import util.Token;
+
 
 public class UsersRestServer extends AbstractRestServer {
 	public static final int PORT = 3456;
@@ -28,6 +30,8 @@ public class UsersRestServer extends AbstractRestServer {
 	public static void main(String[] args) throws Exception {
 
 		Log.setLevel( Level.INFO );
+		
+		Token.set( args[0 ] );
 		
 		new UsersRestServer(PORT).start();
 	}	

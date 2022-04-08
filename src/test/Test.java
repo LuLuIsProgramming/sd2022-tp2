@@ -15,12 +15,12 @@ import util.Debug;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
-		UsersRestServer.main( new String[] {});
-		DirectoryRestServer.main( new String[] {});
-		FilesRestServer.main(new String[] {});
+		UsersRestServer.main( new String[] { "xxx" });
+		DirectoryRestServer.main( new String[] {"xxx"});
+		FilesRestServer.main(new String[] {"xxx"});
 
 		
-		Debug.setLogLevel(Level.OFF, "");
+		Debug.setLogLevel(Level.INFO, "");
 		
 		Users us = UsersClientFactory.get();
 		
@@ -30,6 +30,9 @@ public class Test {
 		us.searchUsers("").value().forEach( System.out::println );
 		
 		Directory dir = DirectoryClientFactory.get();
+		
+		var x1 = dir.writeFile("file1", "xpto1".getBytes(), "simone", "12345");
+		System.err.println( x1 );
 		
 		dir.writeFile("file1", "xpto1".getBytes(), "smd", "12345");
 		
@@ -42,7 +45,11 @@ public class Test {
 		dir.lsFile("smd", "12345").value().forEach( System.out::println );
 		dir.lsFile("nmp", "54321").value().forEach( System.out::println );
 		
-//		dir.unshareFile("file1", "smd", "nmp", "12345");
+		var xxx = dir.getFile("file1", "smd", "smd", "12345");
+		
+		System.err.println("##########GETFILE: " + xxx);
+//		
+		dir.unshareFile("file1", "smd", "nmp", "12345");
 
 		dir.lsFile("nmp", "54321").value().forEach( System.out::println );
 

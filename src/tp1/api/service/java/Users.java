@@ -14,8 +14,5 @@ public interface Users {
 	
 	Result<User> deleteUser(String userId, String password);
 	
-	Result<List<User>> searchUsers(String pattern);
-		
-	Result<User> fetchUser( String userId, String token );
-	
+	Result<List<User>> searchUsers(String pattern);	
 }

@@ -23,7 +23,8 @@ public class SoapDirectoryWebService implements SoapDirectory {
 	}
 
 	/*
-	 * Given a Result<T> returns T value or throws a DirectoryException with the corresponding error message
+	 * Given a Result<T> returns T value or throws a DirectoryException with the
+	 * corresponding error message
 	 */
 	private <T> T resultOrThrow(Result<T> result) throws DirectoryException {
 		if (result.isOK())
@@ -34,38 +35,38 @@ public class SoapDirectoryWebService implements SoapDirectory {
 
 	@Override
 	public FileInfo writeFile(String filename, byte[] data, String userId, String password) throws DirectoryException {
-		return resultOrThrow( impl.writeFile(filename, data, userId, password));
+		return resultOrThrow(impl.writeFile(filename, data, userId, password));
 	}
 
 	@Override
 	public void deleteFile(String filename, String userId, String password) throws DirectoryException {
-		resultOrThrow( impl.deleteFile(filename, userId, password));
+		resultOrThrow(impl.deleteFile(filename, userId, password));
 	}
 
 	@Override
 	public void shareFile(String filename, String userId, String userIdShare, String password)
 			throws DirectoryException {
-		resultOrThrow( impl.shareFile(filename, userId, userIdShare, password));	
+		resultOrThrow(impl.shareFile(filename, userId, userIdShare, password));
 	}
 
 	@Override
 	public void unshareFile(String filename, String userId, String userIdShare, String password)
 			throws DirectoryException {
-		resultOrThrow( impl.unshareFile(filename, userId, userIdShare, password));
+		resultOrThrow(impl.unshareFile(filename, userId, userIdShare, password));
 	}
 
 	@Override
 	public byte[] getFile(String filename, String userId, String accUserId, String password) throws DirectoryException {
-		return resultOrThrow( impl.getFile(filename, userId, accUserId, password));
+		return resultOrThrow(impl.getFile(filename, userId, accUserId, password));
 	}
 
 	@Override
 	public List<FileInfo> lsFile(String userId, String password) throws DirectoryException {
-		return resultOrThrow( impl.lsFile(userId, password));
+		return resultOrThrow(impl.lsFile(userId, password));
 	}
 
 	@Override
-	public List<String> deleteUserFiles(String userId, String token) throws DirectoryException {
-		return resultOrThrow( impl.deleteUserFiles( userId, token));
+	public void deleteUserFiles(String userId, String password, String token) throws DirectoryException {
+		resultOrThrow(impl.deleteUserFiles(userId, password, token));
 	}
 }

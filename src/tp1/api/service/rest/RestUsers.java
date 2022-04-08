@@ -93,15 +93,4 @@ public interface RestUsers {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	List<User> searchUsers(@QueryParam("query") String pattern);
-
-	/*
-	 * Extended Users Service.
-	 * 
-	 * Operations intended to be used among servers...
-	 * 
-	 * */
-	@GET
-	@Path("/{userId}/x")
-	@Produces(MediaType.APPLICATION_JSON)
-	User fetchUser(@PathParam("userId") String userId, @QueryParam("token") String token);
 }

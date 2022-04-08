@@ -1,7 +1,9 @@
 package tp1.impl.clients;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -58,4 +60,11 @@ public class FilesClientFactory {
 		URI[] uris = Discovery.getInstance().findUrisOf(SERVICE_NAME, 1);
 		return uris[ rg.nextInt( uris.length )];
 	}
+	
+	
+	public static List<Files> all()  {
+		return Stream.of(Discovery.getInstance().findUrisOf(SERVICE_NAME, 1))
+				.map( FilesClientFactory::getByUri ).toList();
+	}
+	
 }

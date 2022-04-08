@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
+import util.Token;
+
 public class FilesRestServer extends AbstractRestServer {
 	public static final int PORT = 5678;
 	public static final String SERVICE_NAME = "files";
@@ -27,6 +29,8 @@ public class FilesRestServer extends AbstractRestServer {
 
 		Log.setLevel( Level.INFO );
 		
+		Token.set( args[0 ] );
+
 		new FilesRestServer(PORT).start();
 	}	
 }

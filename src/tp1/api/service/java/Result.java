@@ -21,7 +21,7 @@ public interface Result<T> {
 	 * NOT_FOUND - an access occurred to something that does not exist
 	 * INTERNAL_ERROR - something unexpected happened
 	 */
-	enum ErrorCode{ OK, CONFLICT, NOT_FOUND, BAD_REQUEST, FORBIDDEN, INTERNAL_ERROR, NOT_IMPLEMENTED, TIMEOUT};
+	enum ErrorCode{ OK, CONFLICT, NOT_FOUND, BAD_REQUEST, FORBIDDEN, INTERNAL_ERROR, REDIRECT, NOT_IMPLEMENTED, TIMEOUT};
 	
 	/**
 	 * Tests if the result is an error.
@@ -41,6 +41,12 @@ public interface Result<T> {
 	 * 
 	 */
 	ErrorCode error();
+	
+	/**
+	 * obtains the payload value of this result
+	 * @return the value of this result.
+	 */
+	<P> P errorValue();
 	
 	/**
 	 * Convenience method for returning non error results of the given type
@@ -65,6 +71,14 @@ public interface Result<T> {
 	 */
 	static <T> Result<T> error(ErrorCode error) {
 		return new ErrorResult<>(error);		
+	}
+	
+	/**
+	 * Convenience method used to return an error 
+	 * @return
+	 */
+	static <T> Result<T> error(ErrorCode error, Object errorValue) {
+		return new ErrorResult<>(error, errorValue);		
 	}
 }
 
@@ -97,16 +111,27 @@ class OkResult<T> implements tp1.api.service.java.Result<T> {
 	public String toString() {
 		return "(OK, " + value() + ")";
 	}
+
+	@Override
+	public <P> P errorValue() {
+		throw new RuntimeException("Attempting to extract the error value of an OK result: " + error());
+	}
 }
 
 class ErrorResult<T> implements tp1.api.service.java.Result<T> {
 
+	final Object errorValue;
 	final ErrorCode error;
 	
 	ErrorResult(ErrorCode error) {
 		this.error = error;
+		this.errorValue = null;
 	}
 	
+	ErrorResult(ErrorCode error, Object errorValue) {
+		this.error = error;
+		this.errorValue = errorValue;
+	}
 	@Override
 	public boolean isOK() {
 		return false;
@@ -117,6 +142,12 @@ class ErrorResult<T> implements tp1.api.service.java.Result<T> {
 		throw new RuntimeException("Attempting to extract the value of an Error: " + error());
 	}
 
+	@SuppressWarnings("unchecked")
+	public <Q> Q errorValue() {
+		return (Q)errorValue; 
+	}
+
+	
 	@Override
 	public ErrorCode error() {
 		return error;

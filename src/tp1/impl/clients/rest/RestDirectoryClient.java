@@ -16,7 +16,6 @@ import tp1.api.service.rest.RestDirectory;
 public class RestDirectoryClient extends RestClient implements Directory {
 
 
-	private static final String USER = "user";
 	private static final String SHARE = "share";
 	private static final String PASSWORD = "password";
 	private static final String ACC_USER_ID = "accUserId";
@@ -46,7 +45,7 @@ public class RestDirectoryClient extends RestClient implements Directory {
 				.queryParam(PASSWORD, password)
 				.request()
 				.delete();
-		return super.verifyResponse(r, Status.OK);
+		return super.verifyResponse(r, Status.NO_CONTENT);
 	}
 
 	@Override
@@ -58,7 +57,7 @@ public class RestDirectoryClient extends RestClient implements Directory {
 				.queryParam(PASSWORD, password)
 				.request()
 				.post(Entity.json(null));		
-		return super.verifyResponse(r, Status.OK);
+		return super.verifyResponse(r, Status.NO_CONTENT);
 	}
 
 	@Override
@@ -70,7 +69,7 @@ public class RestDirectoryClient extends RestClient implements Directory {
 				.queryParam(PASSWORD, password)
 				.request()
 				.delete();
-		return super.verifyResponse(r, Status.OK);
+		return super.verifyResponse(r, Status.NO_CONTENT);
 	}
 
 	@Override
@@ -96,14 +95,12 @@ public class RestDirectoryClient extends RestClient implements Directory {
 	}
 
 	@Override
-	public Result<List<String>> deleteUserFiles(String userId, String token) {
-		Response r = target.path(USER).path(userId)
+	public Result<Void> deleteUserFiles(String userId, String password, String token) {
+		Response r = target.path(userId)
+				.queryParam(PASSWORD, password)
 				.queryParam(TOKEN, token)
 				.request()
-				.accept( MediaType.APPLICATION_JSON)
 				.delete();
-		return super.responseContents(r, Status.OK, new GenericType<List<String>>() {});
+		return super.verifyResponse(r, Status.NO_CONTENT);
 	}
-	
-
 }

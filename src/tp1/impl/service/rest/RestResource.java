@@ -1,7 +1,10 @@
 package tp1.impl.service.rest;
 
 
+import java.net.URI;
+
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import tp1.api.service.java.Result;
 
@@ -36,8 +39,15 @@ public class RestResource {
 				return Status.INTERNAL_SERVER_ERROR;
 			case OK:
 				return result.value() == null ? Status.NO_CONTENT: Status.OK;
+			case REDIRECT:
+				doRedirect( result );
 			default:
 				return Status.INTERNAL_SERVER_ERROR;
 		}
+	}
+	
+	static private void doRedirect( Result<?> result) throws WebApplicationException {
+		var location = URI.create( result.errorValue() );
+		throw new WebApplicationException( Response.temporaryRedirect(location).build()) ;
 	}
 }

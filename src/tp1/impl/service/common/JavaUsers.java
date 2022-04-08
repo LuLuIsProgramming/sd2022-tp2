@@ -17,6 +17,8 @@ import tp1.api.User;
 import tp1.api.service.java.Result;
 import tp1.api.service.java.Users;
 import tp1.impl.clients.DirectoryClientFactory;
+import tp1.impl.clients.FilesClientFactory;
+import util.Token;
 
 public class JavaUsers implements Users {
 	final protected Map<String, User> users = new ConcurrentHashMap<>();
@@ -79,10 +81,11 @@ public class JavaUsers implements Users {
 		if (badParam(password) || wrongPassword(user, password))
 			return error(FORBIDDEN);
 		else {
-			users.remove( userId);
+			users.remove(userId);
 			executor.execute(()->{
-				var res = DirectoryClientFactory.get().deleteUserFiles(userId, "");				
-				System.err.println( res );
+				DirectoryClientFactory.get().deleteUserFiles(userId, password, Token.get());
+				for( var fc : FilesClientFactory.all())
+					fc.deleteUserFiles( userId, password);
 			});
 			return ok(user);
 		}
@@ -101,20 +104,7 @@ public class JavaUsers implements Users {
 		
 		return ok(hits);
 	}
-
-	@Override
-	public Result<User> fetchUser(String userId, String token) {
-		if( badParam(userId))
-			return error( BAD_REQUEST );
-		
-		var user = users.get(userId);
-		
-		if (user == null)
-			return error(NOT_FOUND);
-		else
-			return ok(user);
-	}
-		
+	
 	private boolean badParam( String str ) {
 		return str == null;
 	}

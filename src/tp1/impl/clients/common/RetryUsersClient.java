@@ -39,9 +39,4 @@ public class RetryUsersClient extends RetryClient implements Users {
 	public Result<User> updateUser(String userId, String password, User user) {
 		return reTry( () -> impl.updateUser(userId, password, user));		
 	}
-
-	@Override
-	public Result<User> fetchUser(String userId, String token) {
-		return reTry( () -> impl.fetchUser(userId, token));		
-	}
 }
