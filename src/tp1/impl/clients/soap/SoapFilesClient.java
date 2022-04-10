@@ -9,12 +9,11 @@ import jakarta.xml.ws.Service;
 import tp1.api.service.java.Files;
 import tp1.api.service.java.Result;
 import tp1.api.service.soap.SoapFiles;
-import tp1.api.service.soap.SoapUsers;
 import util.Url;
 
 public class SoapFilesClient extends SoapClient implements Files {
 
-	private static final String SOAP_PORT = "SoapUsersWebServicePort";
+	private static final String SOAP_PORT = "SoapFilesWebServicePort";
 
 	public SoapFilesClient(URI serverURI) {
 		super(serverURI);
@@ -24,7 +23,7 @@ public class SoapFilesClient extends SoapClient implements Files {
 
 	synchronized private SoapFiles impl() {
 		if (impl == null) {
-			QName QNAME = new QName(SoapUsers.NAMESPACE, SoapUsers.NAME);
+			QName QNAME = new QName(SoapFiles.NAMESPACE, SoapFiles.NAME);
 
 			Service service = Service.create(Url.from(super.uri + WSDL), QNAME);
 

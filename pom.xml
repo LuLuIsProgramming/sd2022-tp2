@@ -139,5 +139,10 @@
 			<artifactId>guava</artifactId>
 			<version>31.1-jre</version>
 		</dependency>
+		<dependency>
+    <groupId>com.sun.org.apache.xml.internal</groupId>
+    <artifactId>resolver</artifactId>
+    <version>20050927</version>
+</dependency>
 	</dependencies>
 </project>

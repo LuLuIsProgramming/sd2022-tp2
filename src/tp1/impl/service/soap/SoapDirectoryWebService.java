@@ -16,7 +16,7 @@ public class SoapDirectoryWebService implements SoapDirectory {
 
 	static Logger Log = Logger.getLogger(SoapDirectoryWebService.class.getName());
 
-	final Directory impl;
+	final JavaDirectory impl;
 
 	public SoapDirectoryWebService() {
 		impl = new JavaDirectory();
@@ -57,7 +57,7 @@ public class SoapDirectoryWebService implements SoapDirectory {
 
 	@Override
 	public byte[] getFile(String filename, String userId, String accUserId, String password) throws DirectoryException {
-		return resultOrThrow(impl.getFile(filename, userId, accUserId, password));
+		return resultOrThrow(impl.getFileNoRedirect(filename, userId, accUserId, password));
 	}
 
 	@Override

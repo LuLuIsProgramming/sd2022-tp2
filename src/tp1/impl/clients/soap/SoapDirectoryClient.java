@@ -12,7 +12,6 @@ import tp1.api.service.java.Directory;
 import tp1.api.service.java.Result;
 import tp1.api.service.soap.SoapDirectory;
 import tp1.api.service.soap.SoapFiles;
-import tp1.api.service.soap.SoapUsers;
 import util.Url;
 
 public class SoapDirectoryClient extends SoapClient implements Directory {
@@ -29,7 +28,7 @@ private SoapDirectory impl;
 	
 	synchronized private SoapDirectory impl() {
 		if (impl == null) {
-			QName QNAME = new QName(SoapUsers.NAMESPACE, SoapUsers.NAME);
+			QName QNAME = new QName(SoapDirectory.NAMESPACE, SoapDirectory.NAME);
 			
 			Service service = Service.create(Url.from(super.uri + WSDL), QNAME);
 

@@ -21,13 +21,12 @@ public class DirectoryRestServer extends AbstractRestServer {
 	@Override
 	void registerResources(ResourceConfig config) {
 		config.register( DirectoryResources.class ); 
-		config.register( GenericExceptionMapper.class );
+//		config.register( GenericExceptionMapper.class );
 		
-		config.register( CustomLoggingFilter.class);
+//		config.register( CustomLoggingFilter.class);
 	}
 	
 	public static void main(String[] args) throws Exception {
-
 		Log.setLevel( Level.INFO );
 
 		Token.set( args[0 ] );

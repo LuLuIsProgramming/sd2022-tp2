@@ -186,6 +186,17 @@ public class JavaDirectory implements Directory {
 			return error( file.error() );
 	}
 	
+	public Result<byte[]> getFileNoRedirect(String filename, String userId, String accUserId, String password) {
+		var file = getFileInfo(filename, userId, accUserId, password);
+		if( file.isOK() ) {
+			var fileId = fileId(filename, userId);
+			var filee = files.get( fileId );
+			return FilesClientFactory.getByUri(filee.uri()).getFile(fileId, password);
+		}
+		else
+			return error( file.error() );
+	}
+
 	@Override
 	public Result<List<FileInfo>> lsFile(String userId, String password) {
 		if (badParam(userId) )
