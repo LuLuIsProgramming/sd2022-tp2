@@ -11,14 +11,9 @@ import tp1.api.FileInfo;
 import tp1.api.service.java.Directory;
 import tp1.api.service.java.Result;
 import tp1.api.service.soap.SoapDirectory;
-import tp1.api.service.soap.SoapFiles;
-import tp1.api.service.soap.SoapUsers;
 import util.Url;
 
 public class SoapDirectoryClient extends SoapClient implements Directory {
-
-	private static final String SOAP_PORT = "SoapDirectoryWebServicePort";
-
 
 	public SoapDirectoryClient( URI serverURI ) {
 		super(serverURI);
@@ -29,12 +24,11 @@ private SoapDirectory impl;
 	
 	synchronized private SoapDirectory impl() {
 		if (impl == null) {
-			QName QNAME = new QName(SoapUsers.NAMESPACE, SoapUsers.NAME);
+			QName QNAME = new QName(SoapDirectory.NAMESPACE, SoapDirectory.NAME);
 			
 			Service service = Service.create(Url.from(super.uri + WSDL), QNAME);
 
-			QName port = new QName(SoapFiles.NAMESPACE, SOAP_PORT);
-			this.impl = service.getPort(port, tp1.api.service.soap.SoapDirectory.class);
+			this.impl = service.getPort(tp1.api.service.soap.SoapDirectory.class);
 			super.setTimeouts( (BindingProvider)impl);
 		}
 		return impl;

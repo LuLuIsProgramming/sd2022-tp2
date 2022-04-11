@@ -26,9 +26,7 @@ public class SoapUsersClient extends SoapClient implements Users {
 			QName QNAME = new QName(SoapUsers.NAMESPACE, SoapUsers.NAME);
 			
 			Service service = Service.create(Url.from(super.uri + WSDL), QNAME);
-
-			QName port = new QName(SoapUsers.NAMESPACE, "SoapUsersWebServicePort");
-			this.impl = service.getPort(port, tp1.api.service.soap.SoapUsers.class);
+			this.impl = service.getPort(tp1.api.service.soap.SoapUsers.class);
 			super.setTimeouts( (BindingProvider)impl);
 		}
 		return impl;
