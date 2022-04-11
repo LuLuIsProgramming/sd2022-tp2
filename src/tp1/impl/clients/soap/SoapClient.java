@@ -42,16 +42,15 @@ abstract class SoapClient extends RetryClient {
 		void run() throws Exception;
 	}
 
-	protected <T> Result<T> tryCatchResult(ResultSupplier<T> sup) {
+	protected <T> Result<T> tryCatchResult(ResultSupplier<T> supplier) {
 		try {
-			T result = sup.get();
-			return ok(result);	
+			return ok( supplier.get());	
 		} 
 		catch (Exception e) {			
-			if( e instanceof WebServiceException )
+			if( e instanceof WebServiceException ) {
+				e.printStackTrace();
 				throw new RuntimeException( e.getMessage() );
-			
-			e.printStackTrace();
+			}			
 			return error(getErrorCodeFrom(e));
 		}
 	}
@@ -62,10 +61,10 @@ abstract class SoapClient extends RetryClient {
 			return ok();
 		}
 		catch (Exception e) {
-			if( e instanceof WebServiceException )
-				throw new RuntimeException( e.getMessage() );
-			
-			e.printStackTrace();
+			if( e instanceof WebServiceException ) {
+				e.printStackTrace();
+				throw new RuntimeException( e.getMessage() );				
+			}
 			return error(getErrorCodeFrom(e));
 		}
 	}
