@@ -11,11 +11,10 @@ import tp1.impl.service.common.JavaFiles;
 public class FilesResources extends RestResource implements RestFiles {
 	private static Logger Log = Logger.getLogger(FilesResources.class.getName());
 
-	private static final String ROOT_DIR = "/tmp/";
 	final Files impl;
 
 	public FilesResources() {
-		impl = new JavaFiles(ROOT_DIR);
+		impl = new JavaFiles();
 	}
 
 	@Override
