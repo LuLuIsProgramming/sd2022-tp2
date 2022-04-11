@@ -80,6 +80,14 @@ public interface Result<T> {
 	static <T> Result<T> error(ErrorCode error, Object errorValue) {
 		return new ErrorResult<>(error, errorValue);		
 	}
+	
+	/**
+	 * Convenience method used to return an redirect result 
+	 * @return
+	 */
+	static <T> Result<T> redirect(String urlValue) {
+		return new ErrorResult<>(ErrorCode.REDIRECT, urlValue);		
+	}
 }
 
 /*
