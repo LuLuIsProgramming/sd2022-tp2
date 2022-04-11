@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import jakarta.xml.ws.Endpoint;
 import tp1.impl.discovery.Discovery;
 import util.IP;
+import util.Token;
 
 
 public class FilesSoapServer {
@@ -18,6 +19,8 @@ public class FilesSoapServer {
 	private static Logger Log = Logger.getLogger(FilesSoapServer.class.getName());
 
 	public static void main(String[] args) throws Exception {
+
+		Token.set( args[0 ] );
 
 //		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
 //		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
