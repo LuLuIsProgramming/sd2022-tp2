@@ -18,32 +18,30 @@ import util.IO;
 public class JavaFiles implements Files {
 
 	static final String DELIMITER = "$$$";
+	private static final String ROOT = "/tmp/";
 	
-	final String rootDir;
-	
-	public JavaFiles( String rootDir ) {
-		this.rootDir = rootDir.endsWith("/") ? rootDir : rootDir + "/";
-		new File( this.rootDir ).mkdirs();
+	public JavaFiles() {
+		new File( ROOT ).mkdirs();
 	}
 
 	@Override
 	public Result<byte[]> getFile(String fileId, String token) {
 		fileId = fileId.replace( DELIMITER, "/");
-		byte[] data = IO.read( new File( rootDir + fileId ));
+		byte[] data = IO.read( new File( ROOT + fileId ));
 		return data != null ? ok( data) : error( NOT_FOUND );
 	}
 
 	@Override
 	public Result<Void> deleteFile(String fileId, String token) {
 		fileId = fileId.replace( DELIMITER, "/");
-		boolean res = IO.delete( new File( rootDir + fileId ));	
+		boolean res = IO.delete( new File( ROOT + fileId ));	
 		return res ? ok() : error( NOT_FOUND );
 	}
 
 	@Override
 	public Result<Void> writeFile(String fileId, byte[] data, String token) {
 		fileId = fileId.replace( DELIMITER, "/");
-		File file = new File(rootDir + fileId);
+		File file = new File(ROOT + fileId);
 		file.getParentFile().mkdirs();
 		IO.write( file, data);
 		return ok();
@@ -51,7 +49,7 @@ public class JavaFiles implements Files {
 
 	@Override
 	public Result<Void> deleteUserFiles(String userId, String token) {
-		File file = new File(rootDir + userId);
+		File file = new File(ROOT + userId);
 		try {
 			java.nio.file.Files.walk(file.toPath())
 			.sorted(Comparator.reverseOrder())
