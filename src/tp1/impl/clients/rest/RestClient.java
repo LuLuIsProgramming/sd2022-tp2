@@ -47,7 +47,7 @@ abstract class RestClient extends RetryClient {
 		this.config.property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
 		this.config.property(ClientProperties.FOLLOW_REDIRECTS, true);
 
-		config.register(new LoggingFeature(Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME), Level.INFO, LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));		  
+//		config.register(new LoggingFeature(Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME), Level.INFO, LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));		  
 		
 		this.client = ClientBuilder.newClient(config);
 		this.target = this.client.target(uri).path(path);
