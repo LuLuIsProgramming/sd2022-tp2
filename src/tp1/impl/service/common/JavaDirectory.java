@@ -2,11 +2,11 @@ package tp1.impl.service.common;
 
 import static tp1.api.service.java.Result.error;
 import static tp1.api.service.java.Result.ok;
+import static tp1.api.service.java.Result.redirect;
 import static tp1.api.service.java.Result.ErrorCode.BAD_REQUEST;
 import static tp1.api.service.java.Result.ErrorCode.FORBIDDEN;
-import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
-import static tp1.api.service.java.Result.ErrorCode.REDIRECT;
 import static tp1.api.service.java.Result.ErrorCode.INTERNAL_ERROR;
+import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -18,7 +18,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,8 +38,6 @@ public class JavaDirectory implements Directory {
 	private static final long USER_CACHE_CAPACITY = 100;
 	private static final long USER_CACHE_EXPIRATION = 120;
 
-	final AtomicInteger counter = new AtomicInteger();
-
 	final Map<String, ExtendedFileInfo> files = new ConcurrentHashMap<>();
 	final Map<String, UserFiles> userFiles = new ConcurrentHashMap<>();
 	
@@ -51,9 +48,6 @@ public class JavaDirectory implements Directory {
 					return UsersClientFactory.get().getUser( u.userId(), u.password());
 				}
 			});
-
-	public JavaDirectory() {
-	}
 
 	@Override
 	public Result<FileInfo> writeFile(String filename, byte[] data, String userId, String password) {
@@ -128,7 +122,6 @@ public class JavaDirectory implements Directory {
 			file.info().getSharedWith().add(userIdShare);
 			userFiles.computeIfAbsent(userIdShare, (k) -> new UserFiles()).shared().add(fileId);
 		}
-
 		return ok();
 	}
 
@@ -180,7 +173,7 @@ public class JavaDirectory implements Directory {
 	public Result<byte[]> getFile(String filename, String userId, String accUserId, String password) {
 		var file = getFileInfo(filename, userId, accUserId, password);
 		if( file.isOK() ) {
-			return error( REDIRECT,  file.value().getFileURL());
+			return redirect(file.value().getFileURL());
 		}
 		else
 			return error( file.error() );
@@ -205,11 +198,11 @@ public class JavaDirectory implements Directory {
 
 
 
-	private String fileId(String filename, String userId) {
+	public static String fileId(String filename, String userId) {
 		return userId + JavaFiles.DELIMITER + filename;
 	}
 
-	private boolean badParam(String str) {
+	private static boolean badParam(String str) {
 		return str == null || str.length() == 0;
 	}
 
@@ -252,6 +245,7 @@ public class JavaDirectory implements Directory {
 			this( ConcurrentHashMap.newKeySet(), ConcurrentHashMap.newKeySet());
 		}
 	}
+	
 	static record UserInfo(String userId, String password) {
 	}
 }
