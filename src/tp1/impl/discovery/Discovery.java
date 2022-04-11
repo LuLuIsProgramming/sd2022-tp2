@@ -112,7 +112,7 @@ public class Discovery {
 	
 	
 	public URI[] findUrisOf(String serviceName, int minRepliesNeeded) {
-		Log.info(String.format("Waiting for discovery for: %s\n", serviceName));
+		Log.info(String.format("Discovery.findUrisOf( serviceName: %s, minRequired: %d\n", serviceName, minRepliesNeeded));
 		
 		for(;;) {
 			var results = discoveries.get( serviceName );
