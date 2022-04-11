@@ -40,12 +40,12 @@ public class JavaDirectory implements Directory {
 
 	final Map<String, ExtendedFileInfo> files = new ConcurrentHashMap<>();
 	final Map<String, UserFiles> userFiles = new ConcurrentHashMap<>();
-	
+
 	LoadingCache<UserInfo, Result<User>> users = CacheBuilder.newBuilder().maximumSize(USER_CACHE_CAPACITY)
 			.expireAfterWrite(USER_CACHE_EXPIRATION, TimeUnit.SECONDS).build(new CacheLoader<>() {
 				@Override
 				public Result<User> load(UserInfo u) {
-					return UsersClientFactory.get().getUser( u.userId(), u.password());
+					return UsersClientFactory.get().getUser(u.userId(), u.password());
 				}
 			});
 
@@ -54,27 +54,28 @@ public class JavaDirectory implements Directory {
 
 		if (badParam(filename) || badParam(userId))
 			return error(BAD_REQUEST);
-		
-		var user = getUser( userId, password );
-		if( ! user.isOK() )
-			return error( user.error() );
 
-		var fileId = fileId(filename, userId);
-		var file = files.get( fileId );
-		if( file == null ) {
+		var user = getUser(userId, password);
+		if (!user.isOK())
+			return error(user.error());
+
+		var uf = userFiles.computeIfAbsent(userId, (k) -> new UserFiles());
+		synchronized (uf) {
+			var fileId = fileId(filename, userId);
+			var file = files.get(fileId);
+			if (file == null) {
 				var uri = FilesClientFactory.randomServerURI();
 				var info = new FileInfo();
 				info.setOwner(userId);
 				info.setFilename(filename);
 				info.setSharedWith(ConcurrentHashMap.newKeySet());
 				info.setFileURL(String.format("%s/files/%s", uri, fileId));
-				synchronized (files) {
-					files.put(fileId, file = new ExtendedFileInfo(uri, fileId, info));				
-					userFiles.computeIfAbsent(userId, (k) -> new UserFiles()).owned().add(fileId);
-				}
+				files.put(fileId, file = new ExtendedFileInfo(uri, fileId, info));
+				uf.owned().add(fileId);
+			}
+			FilesClientFactory.getByUri(file.uri()).writeFile(fileId, data, password);
+			return ok(file.info());
 		}
-		FilesClientFactory.getByUri(file.uri()).writeFile(fileId, data, password);
-		return ok(file.info());
 	}
 
 	@Override
@@ -85,22 +86,24 @@ public class JavaDirectory implements Directory {
 		var fileId = fileId(filename, userId);
 
 		var file = files.get(fileId);
-		if (file == null )
+		if (file == null)
 			return error(NOT_FOUND);
 
-		var user = getUser( userId, password );
-		if( ! user.isOK() )
-			return error( user.error() );
-		
-		else {
+		var user = getUser(userId, password);
+		if (!user.isOK())
+			return error(user.error());
+
+		var uf = userFiles.getOrDefault(userId, new UserFiles());
+		synchronized (uf) {
 			var info = files.remove(fileId);
-			userFiles.getOrDefault(userId, new UserFiles()).owned().remove(fileId);
+			uf.owned().remove(fileId);
+
 			executor.execute(() -> {
 				this.removeSharesOfFile(info);
 				FilesClientFactory.getByUri(file.uri()).deleteFile(fileId, password);
 			});
-			return ok();
 		}
+		return ok();
 	}
 
 	@Override
@@ -111,17 +114,19 @@ public class JavaDirectory implements Directory {
 		var fileId = fileId(filename, userId);
 
 		var file = files.get(fileId);
-		if (file == null || getUser( userIdShare, "").error() == NOT_FOUND )
+		if (file == null || getUser(userIdShare, "").error() == NOT_FOUND)
 			return error(NOT_FOUND);
 
-		var user = getUser( userId, password );
-		if( ! user.isOK() )
-			return error( user.error() );
-		
-		synchronized( file ) {
+		var user = getUser(userId, password);
+		if (!user.isOK())
+			return error(user.error());
+
+		var uf = userFiles.computeIfAbsent(userIdShare, (k) -> new UserFiles());
+		synchronized ( uf ) {
+			uf.shared().add(fileId);
 			file.info().getSharedWith().add(userIdShare);
-			userFiles.computeIfAbsent(userIdShare, (k) -> new UserFiles()).shared().add(fileId);
 		}
+		
 		return ok();
 	}
 
@@ -133,18 +138,19 @@ public class JavaDirectory implements Directory {
 		var fileId = fileId(filename, userId);
 
 		var file = files.get(fileId);
-		if (file == null || getUser( userIdShare, "").error() == NOT_FOUND)
+		if (file == null || getUser(userIdShare, "").error() == NOT_FOUND)
 			return error(NOT_FOUND);
 
-		var user = getUser( userId, password );
-		if( ! user.isOK() )
-			return error( user.error() );
-		
-		synchronized(file) {
-			file.info().getSharedWith().remove(userIdShare);			
-			userFiles.computeIfAbsent(userIdShare, (k) -> new UserFiles()).shared().remove(fileId);
-		}
+		var user = getUser(userId, password);
+		if (!user.isOK())
+			return error(user.error());
 
+		var uf = userFiles.computeIfAbsent(userIdShare, (k) -> new UserFiles());
+		synchronized ( uf ) {
+			uf.shared().remove(fileId);
+			file.info().getSharedWith().remove(userIdShare);
+		}
+		
 		return ok();
 	}
 
@@ -156,13 +162,13 @@ public class JavaDirectory implements Directory {
 		var fileId = fileId(filename, userId);
 
 		var file = files.get(fileId);
-		if( file == null )
-			return error( NOT_FOUND );
-					
-		var user = getUser( accUserId, password );
-		if( ! user.isOK() )
-			return error( user.error() );
-		
+		if (file == null)
+			return error(NOT_FOUND);
+
+		var user = getUser(accUserId, password);
+		if (!user.isOK())
+			return error(user.error());
+
 		if (!file.info().hasAccess(accUserId))
 			return error(FORBIDDEN);
 		else
@@ -172,42 +178,30 @@ public class JavaDirectory implements Directory {
 	@Override
 	public Result<byte[]> getFile(String filename, String userId, String accUserId, String password) {
 		var file = getFileInfo(filename, userId, accUserId, password);
-		if( file.isOK() ) {
+		if (file.isOK()) {
 			return redirect(file.value().getFileURL());
-		}
-		else
-			return error( file.error() );
-	}
-	
-	public Result<byte[]> getFileNoRedirect(String filename, String userId, String accUserId, String password) {
-		var file = getFileInfo(filename, userId, accUserId, password);
-		if( file.isOK() ) {
-			var fileId = fileId(filename, userId);
-			var filee = files.get( fileId );
-			return FilesClientFactory.getByUri(filee.uri()).getFile(fileId, password);
-		}
-		else
-			return error( file.error() );
+		} else
+			return error(file.error());
 	}
 
 	@Override
 	public Result<List<FileInfo>> lsFile(String userId, String password) {
-		if (badParam(userId) )
+		if (badParam(userId))
 			return error(BAD_REQUEST);
-		
-		var user = getUser( userId, password );
-		if( ! user.isOK() )
-			return error( user.error() );
-		
+
+		var user = getUser(userId, password);
+		if (!user.isOK())
+			return error(user.error());
+
 		var uf = userFiles.getOrDefault(userId, new UserFiles());
-		var infos = Stream.concat( uf.owned().stream(), uf.shared().stream())
-						.map( f -> files.get(f).info() )
-						.collect( Collectors.toSet());
-		
-		return ok( new ArrayList<>(infos) );
+		synchronized (uf) {
+			var infos = Stream.concat(uf.owned().stream(), uf.shared().stream())
+					.map(f -> files.get(f).info())
+					.collect(Collectors.toSet());
+
+			return ok(new ArrayList<>(infos));			
+		}
 	}
-
-
 
 	public static String fileId(String filename, String userId) {
 		return userId + JavaFiles.DELIMITER + filename;
@@ -217,9 +211,9 @@ public class JavaDirectory implements Directory {
 		return str == null || str.length() == 0;
 	}
 
-	private Result<User> getUser( String userId, String password) {
+	private Result<User> getUser(String userId, String password) {
 		try {
-			var r =  users.get( new UserInfo(userId, password ));
+			var r = users.get(new UserInfo(userId, password));
 			System.err.println("GET USER: " + userId + " " + password + "->" + r);
 			return r;
 		} catch (ExecutionException e) {
@@ -231,32 +225,31 @@ public class JavaDirectory implements Directory {
 	@Override
 	public Result<Void> deleteUserFiles(String userId, String password, String token) {
 		System.err.println("deleteUserFiles: " + userId + " pwd= " + password);
-		users.invalidate( new UserInfo(userId, password) );
+		users.invalidate(new UserInfo(userId, password));
 		var fileIds = userFiles.remove(userId);
-		if( fileIds != null )
-			for( var id : fileIds.owned() ) {
-				var file = files.remove( id );
-				removeSharesOfFile( file );
+		if (fileIds != null)
+			for (var id : fileIds.owned()) {
+				var file = files.remove(id);
+				removeSharesOfFile(file);
 			}
 		return ok();
 	}
-	
-	
-	private void removeSharesOfFile( ExtendedFileInfo file) {
-		for( var userId : file.info().getSharedWith())
-			userFiles.getOrDefault(userId, new UserFiles()).shared().remove( file.fileId());
+
+	private void removeSharesOfFile(ExtendedFileInfo file) {
+		for (var userId : file.info().getSharedWith())
+			userFiles.getOrDefault(userId, new UserFiles()).shared().remove(file.fileId());
 	}
-	
-	static record ExtendedFileInfo(URI uri, String fileId, FileInfo info) {		
+
+	static record ExtendedFileInfo(URI uri, String fileId, FileInfo info) {
 	}
-	
-	static record UserFiles( Set<String> owned, Set<String> shared) {
-		
+
+	static record UserFiles(Set<String> owned, Set<String> shared) {
+
 		UserFiles() {
-			this( ConcurrentHashMap.newKeySet(), ConcurrentHashMap.newKeySet());
+			this(ConcurrentHashMap.newKeySet(), ConcurrentHashMap.newKeySet());
 		}
 	}
-	
+
 	static record UserInfo(String userId, String password) {
 	}
 }
