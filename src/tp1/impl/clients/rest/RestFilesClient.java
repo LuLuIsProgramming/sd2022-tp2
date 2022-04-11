@@ -62,5 +62,4 @@ public class RestFilesClient extends RestClient implements Files {
 		System.err.println( r );
 		return super.responseContents(r, Status.OK, new GenericType<byte[]>() {});
 	}
-
 }

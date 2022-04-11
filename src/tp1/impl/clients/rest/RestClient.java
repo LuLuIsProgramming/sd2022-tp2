@@ -4,12 +4,9 @@ import static tp1.api.service.java.Result.error;
 import static tp1.api.service.java.Result.ok;
 
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.logging.LoggingFeature;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;

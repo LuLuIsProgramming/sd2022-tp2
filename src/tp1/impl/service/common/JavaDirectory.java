@@ -10,6 +10,7 @@ import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,6 +30,7 @@ import com.google.common.cache.LoadingCache;
 import tp1.api.FileInfo;
 import tp1.api.User;
 import tp1.api.service.java.Directory;
+import tp1.api.service.java.Files;
 import tp1.api.service.java.Result;
 import tp1.impl.clients.FilesClientFactory;
 import tp1.impl.clients.UsersClientFactory;
@@ -41,6 +44,8 @@ public class JavaDirectory implements Directory {
 	final Map<String, ExtendedFileInfo> files = new ConcurrentHashMap<>();
 	final Map<String, UserFiles> userFiles = new ConcurrentHashMap<>();
 
+	final Map<URI, AtomicLong> fileTotals = new ConcurrentHashMap<>();
+	
 	LoadingCache<UserInfo, Result<User>> users = CacheBuilder.newBuilder().maximumSize(USER_CACHE_CAPACITY)
 			.expireAfterWrite(USER_CACHE_EXPIRATION, TimeUnit.SECONDS).build(new CacheLoader<>() {
 				@Override
@@ -64,18 +69,30 @@ public class JavaDirectory implements Directory {
 			var fileId = fileId(filename, userId);
 			var file = files.get(fileId);
 			if (file == null) {
-				var uri = FilesClientFactory.randomServerURI();
+				var uri = chooseFileServer();
 				var info = new FileInfo();
 				info.setOwner(userId);
 				info.setFilename(filename);
 				info.setSharedWith(ConcurrentHashMap.newKeySet());
 				info.setFileURL(String.format("%s/files/%s", uri, fileId));
-				files.put(fileId, file = new ExtendedFileInfo(uri, fileId, info));
+				files.put(fileId, file = new ExtendedFileInfo( uri, fileId, info));
 				uf.owned().add(fileId);
+				
+				fileTotals.get( uri ).incrementAndGet();
 			}
 			FilesClientFactory.getByUri(file.uri()).writeFile(fileId, data, password);
 			return ok(file.info());
 		}
+	}
+
+	private URI chooseFileServer() {
+			System.err.println( fileTotals );
+
+			return FilesClientFactory.all()
+				.stream()
+				.map( u -> new FileCounts(u, fileTotals.computeIfAbsent(u, k -> new AtomicLong(0))))
+				.sorted( (a, b) -> -Long.compare(a.count().get(), b.count().get()))
+				.findFirst().orElse(null).uri();
 	}
 
 	@Override
@@ -102,6 +119,7 @@ public class JavaDirectory implements Directory {
 				this.removeSharesOfFile(info);
 				FilesClientFactory.getByUri(file.uri()).deleteFile(fileId, password);
 			});
+			fileTotals.getOrDefault(info.uri(), new AtomicLong(0)).decrementAndGet();
 		}
 		return ok();
 	}
@@ -231,6 +249,7 @@ public class JavaDirectory implements Directory {
 			for (var id : fileIds.owned()) {
 				var file = files.remove(id);
 				removeSharesOfFile(file);
+				fileTotals.getOrDefault(file.uri(), new AtomicLong(0)).decrementAndGet();
 			}
 		return ok();
 	}
@@ -251,5 +270,8 @@ public class JavaDirectory implements Directory {
 	}
 
 	static record UserInfo(String userId, String password) {
+	}
+	
+	static record FileCounts( URI uri, AtomicLong count ) {
 	}
 }

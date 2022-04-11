@@ -3,6 +3,7 @@ package tp1.impl.clients.common;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
+import jakarta.ws.rs.ProcessingException;
 import tp1.api.service.java.Result;
 import tp1.api.service.java.Result.ErrorCode;
 import util.Sleep;
@@ -22,7 +23,7 @@ public abstract class RetryClient {
 	protected static final int CONNECT_TIMEOUT = 5000;
 
 	protected static final int RETRY_SLEEP = 1000;
-	protected static final int MAX_RETRIES = 10;
+	protected static final int MAX_RETRIES = 100;
 	
 	// higher order function to retry forever a call until it succeeds
 	// and return an object of some type T to break the loop
@@ -30,9 +31,10 @@ public abstract class RetryClient {
 		for (int i = 0; i < MAX_RETRIES; i++)
 			try {
 				return func.get();
-			} catch (Exception x) {
-				Log.fine("Exception: " + x.getMessage());
-				x.printStackTrace();
+			} 
+		catch (Exception x) {
+				Log.info(">>>>>>>>Exception: " + x.getMessage() );
+//				x.printStackTrace();
 				Sleep.ms(RETRY_SLEEP);
 			}
 		return Result.error( ErrorCode.TIMEOUT );

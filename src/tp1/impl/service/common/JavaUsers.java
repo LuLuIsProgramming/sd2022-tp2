@@ -84,8 +84,8 @@ public class JavaUsers implements Users {
 			users.remove(userId);
 			executor.execute(()->{
 				DirectoryClientFactory.get().deleteUserFiles(userId, password, Token.get());
-				for( var fc : FilesClientFactory.all())
-					fc.deleteUserFiles( userId, password);
+				for( var u : FilesClientFactory.all())
+					FilesClientFactory.getByUri(u).deleteUserFiles( userId, password);
 			});
 			return ok(user);
 		}

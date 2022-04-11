@@ -44,6 +44,7 @@ public class RestUsersClient extends RestClient implements Users {
 
 	@Override
 	public Result<User> getUser(String userId, String password) {
+		System.err.println( target );
 		Response r = target.path(userId)
 				.queryParam(PASSWORD, password)
 				.request()
