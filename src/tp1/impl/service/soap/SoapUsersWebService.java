@@ -5,14 +5,13 @@ import java.util.logging.Logger;
 
 import jakarta.jws.WebService;
 import tp1.api.User;
-import tp1.api.service.java.Result;
 import tp1.api.service.java.Users;
 import tp1.api.service.soap.SoapUsers;
 import tp1.api.service.soap.UsersException;
 import tp1.impl.service.common.JavaUsers;
 
 @WebService(serviceName=SoapUsers.NAME, targetNamespace=SoapUsers.NAMESPACE, endpointInterface=SoapUsers.INTERFACE)
-public class SoapUsersWebService implements SoapUsers {
+public class SoapUsersWebService extends SoapWebService implements SoapUsers {
 
 	static Logger Log = Logger.getLogger(SoapUsersWebService.class.getName());
 
@@ -22,25 +21,18 @@ public class SoapUsersWebService implements SoapUsers {
 		impl = new JavaUsers();
 	}
 
-	private <T> T resultOrThrow(Result<T> result) throws UsersException {
-		if (result.isOK())
-			return result.value();
-		else
-			throw new UsersException(result.error().name());
-	}
-
 	@Override
 	public String createUser(User user) throws UsersException {
 		Log.info(String.format("SOAP createUser: user = %s\n", user));
 
-		return resultOrThrow( impl.createUser( user ));
+		return super.resultOrThrow( impl.createUser( user ), UsersException::new );
 	}
 
 	@Override
 	public User getUser(String userId, String password) throws UsersException  {
 		Log.info(String.format("SOAP getUser: userId = %s password=%s\n", userId, password));
 
-		return resultOrThrow( impl.getUser(userId, password));
+		return super.resultOrThrow( impl.getUser(userId, password), UsersException::new );
 	}
 
 
@@ -48,7 +40,7 @@ public class SoapUsersWebService implements SoapUsers {
 	public User updateUser(String userId, String password, User user) throws UsersException  {
 		Log.info(String.format("SOAP updateUser: userId = %s, user = %s\n", userId, user));
 
-		return resultOrThrow( impl.updateUser(userId, password, user));
+		return super.resultOrThrow( impl.updateUser(userId, password, user), UsersException::new);
 	}
 
 
@@ -56,7 +48,7 @@ public class SoapUsersWebService implements SoapUsers {
 	public User deleteUser(String userId, String password) throws UsersException  {
 		Log.info(String.format("SOAP deleteUser: userId = %s\n", userId));
 		
-		return resultOrThrow( impl.deleteUser(userId, password));
+		return super.resultOrThrow( impl.deleteUser(userId, password), UsersException::new );
 	}
 
 	
@@ -64,6 +56,6 @@ public class SoapUsersWebService implements SoapUsers {
 	public List<User> searchUsers(String pattern) throws UsersException  {
 		Log.info(String.format("SOAP searchUsers: pattern = %s", pattern));
 		
-		return resultOrThrow( impl.searchUsers(pattern));
+		return super.resultOrThrow( impl.searchUsers(pattern), UsersException::new );
 	}
 }

@@ -14,9 +14,6 @@ import tp1.api.service.java.Users;
 import tp1.api.service.rest.RestUsers;
 
 public class RestUsersClient extends RestClient implements Users {
-	private static final String EXT = "/x";
-	private static final String PASSWORD = "password";
-	private static final String QUERY = "query";
 
 	public RestUsersClient(URI serverUri) {
 		super(serverUri, RestUsers.PATH);
@@ -34,7 +31,7 @@ public class RestUsersClient extends RestClient implements Users {
 	@Override
 	public Result<User> updateUser(String userId, String password, User user) {
 		Response r = target.path( userId)
-				.queryParam(PASSWORD, password)
+				.queryParam(RestUsers.PASSWORD, password)
 				.request()
 				.accept(  MediaType.APPLICATION_JSON)
 				.put(Entity.entity(user, MediaType.APPLICATION_JSON));
@@ -46,7 +43,7 @@ public class RestUsersClient extends RestClient implements Users {
 	public Result<User> getUser(String userId, String password) {
 		System.err.println( target );
 		Response r = target.path(userId)
-				.queryParam(PASSWORD, password)
+				.queryParam(RestUsers.PASSWORD, password)
 				.request()
 				.accept(MediaType.APPLICATION_JSON)
 				.get();
@@ -56,7 +53,7 @@ public class RestUsersClient extends RestClient implements Users {
 	@Override
 	public Result<User> deleteUser(String userId, String password) {
 		Response r = target.path(userId)
-				.queryParam(PASSWORD, password)
+				.queryParam(RestUsers.PASSWORD, password)
 				.request()
 				.accept(MediaType.APPLICATION_JSON)
 				.delete();
@@ -67,7 +64,7 @@ public class RestUsersClient extends RestClient implements Users {
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
 		Response r = target
-				.queryParam(QUERY, pattern)
+				.queryParam(RestUsers.QUERY, pattern)
 				.request()
 				.accept(MediaType.APPLICATION_JSON)
 				.get();

@@ -22,10 +22,10 @@ public class FilesSoapServer {
 
 		Token.set( args[0 ] );
 
-//		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
-//		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
-//		System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
-//		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
+		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
+		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
+		System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
+		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
 
 		Log.setLevel(Level.FINER);
 

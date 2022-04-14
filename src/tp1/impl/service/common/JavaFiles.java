@@ -4,11 +4,9 @@ import static tp1.api.service.java.Result.error;
 import static tp1.api.service.java.Result.ok;
 import static tp1.api.service.java.Result.ErrorCode.INTERNAL_ERROR;
 import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
-import static tp1.api.service.java.Result.ErrorCode.NOT_IMPLEMENTED;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.Comparator;
 
@@ -63,8 +61,4 @@ public class JavaFiles implements Files {
 		return ok();
 	}
 
-	@Override
-	public Result<byte[]> getUrl(String url, String token) {
-		return error( NOT_IMPLEMENTED );
-	}
 }

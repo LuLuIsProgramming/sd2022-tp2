@@ -48,21 +48,21 @@ abstract class SoapClient extends RetryClient {
 		} 
 		catch (Exception e) {			
 			if( e instanceof WebServiceException ) {
-				e.printStackTrace();
+//				e.printStackTrace();
 				throw new RuntimeException( e.getMessage() );
 			}			
 			return error(getErrorCodeFrom(e));
 		}
 	}
 
-	protected <T> Result<T> tryCatchVoid(VoidSupplier r) {
+	protected <T> Result<T> tryCatchVoid( VoidSupplier r) {
 		try {
 			r.run();
 			return ok();
 		}
 		catch (Exception e) {
 			if( e instanceof WebServiceException ) {
-				e.printStackTrace();
+//				e.printStackTrace();
 				throw new RuntimeException( e.getMessage() );				
 			}
 			return error(getErrorCodeFrom(e));

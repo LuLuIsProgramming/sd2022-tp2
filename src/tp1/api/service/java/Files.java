@@ -10,6 +10,4 @@ public interface Files {
 
 	Result<Void> deleteUserFiles(String userId, String token);
 	
-	Result<byte[]> getUrl(String url, String token);
-
 }

@@ -56,6 +56,16 @@ public class FilesClientFactory {
 		return null;
 	}
 	
+	public static Files getByUrl(String urlString) {
+		try {
+			var i = urlString.indexOf(SERVICE_NAME);			
+			return files.get( URI.create( urlString.substring(0, i-1) ));
+		} catch (Exception x) {
+			x.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static URI randomServerURI()  {
 		URI[] uris = Discovery.getInstance().findUrisOf(SERVICE_NAME, 1);
 		return uris[ rg.nextInt( uris.length )];

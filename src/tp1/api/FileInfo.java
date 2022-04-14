@@ -2,6 +2,7 @@ package tp1.api;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Represents a File in the system
@@ -22,6 +23,7 @@ public class FileInfo {
 	private Set<String> sharedWith;
 	
 	public FileInfo() {
+		this.sharedWith = ConcurrentHashMap.newKeySet();
 	}
 	
 	public FileInfo(String owner, String filename, String fileURL, Set<String> sharedWith) {

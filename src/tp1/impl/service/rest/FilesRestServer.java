@@ -29,7 +29,7 @@ public class FilesRestServer extends AbstractRestServer {
 
 		Log.setLevel( Level.INFO );
 		
-		Token.set( args[0 ] );
+		Token.set( args.length == 0 ? "" : args[0] );
 
 		new FilesRestServer(PORT).start();
 	}	

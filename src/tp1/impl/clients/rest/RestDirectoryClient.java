@@ -17,9 +17,6 @@ public class RestDirectoryClient extends RestClient implements Directory {
 
 
 	private static final String SHARE = "share";
-	private static final String PASSWORD = "password";
-	private static final String ACC_USER_ID = "accUserId";
-	private static final String TOKEN = "token";	
 	
 	public RestDirectoryClient(URI serverUri) {
 		super(serverUri, RestDirectory.PATH);
@@ -30,8 +27,7 @@ public class RestDirectoryClient extends RestClient implements Directory {
 		System.err.println(target);
 		Response r = target.path(userId)
 				.path(filename)
-				.path("/")
-				.queryParam(PASSWORD, password)
+				.queryParam(RestDirectory.PASSWORD, password)
 				.request()
 				.accept(MediaType.APPLICATION_JSON)
 				.post(Entity.entity( data, MediaType.APPLICATION_OCTET_STREAM));
@@ -42,7 +38,7 @@ public class RestDirectoryClient extends RestClient implements Directory {
 	public Result<Void> deleteFile(String filename, String userId, String password) {
 		Response r = target.path(userId)
 				.path(filename)
-				.queryParam(PASSWORD, password)
+				.queryParam(RestDirectory.PASSWORD, password)
 				.request()
 				.delete();
 		return super.verifyResponse(r, Status.NO_CONTENT);
@@ -54,7 +50,7 @@ public class RestDirectoryClient extends RestClient implements Directory {
 				.path(filename)
 				.path(SHARE)
 				.path( userIdShare)
-				.queryParam(PASSWORD, password)
+				.queryParam(RestDirectory.PASSWORD, password)
 				.request()
 				.post(Entity.json(null));		
 		return super.verifyResponse(r, Status.NO_CONTENT);
@@ -66,7 +62,7 @@ public class RestDirectoryClient extends RestClient implements Directory {
 				.path(filename)
 				.path(SHARE)
 				.path( userIdShare)
-				.queryParam(PASSWORD, password)
+				.queryParam(RestDirectory.PASSWORD, password)
 				.request()
 				.delete();
 		return super.verifyResponse(r, Status.NO_CONTENT);
@@ -76,8 +72,8 @@ public class RestDirectoryClient extends RestClient implements Directory {
 	public Result<byte[]> getFile(String filename, String userId, String accUserId, String password) {
 		Response r = target.path(userId)
 				.path(filename)
-				.queryParam(ACC_USER_ID, accUserId)
-				.queryParam(PASSWORD, password)
+				.queryParam(RestDirectory.ACC_USER_ID, accUserId)
+				.queryParam(RestDirectory.PASSWORD, password)
 				.request()
 				.accept(MediaType.APPLICATION_OCTET_STREAM)
 				.get();
@@ -87,7 +83,7 @@ public class RestDirectoryClient extends RestClient implements Directory {
 	@Override
 	public Result<List<FileInfo>> lsFile(String userId, String password) {
 		Response r = target.path(userId)
-				.queryParam(PASSWORD, password)
+				.queryParam(RestDirectory.PASSWORD, password)
 				.request()
 				.accept(MediaType.APPLICATION_JSON)
 				.get();
@@ -97,8 +93,8 @@ public class RestDirectoryClient extends RestClient implements Directory {
 	@Override
 	public Result<Void> deleteUserFiles(String userId, String password, String token) {
 		Response r = target.path(userId)
-				.queryParam(PASSWORD, password)
-				.queryParam(TOKEN, token)
+				.queryParam(RestDirectory.PASSWORD, password)
+				.queryParam(RestDirectory.TOKEN, token)
 				.request()
 				.delete();
 		return super.verifyResponse(r, Status.NO_CONTENT);

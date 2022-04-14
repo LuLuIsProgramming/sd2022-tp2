@@ -23,13 +23,13 @@ public class DirectoryRestServer extends AbstractRestServer {
 		config.register( DirectoryResources.class ); 
 		config.register( GenericExceptionMapper.class );
 		
-//		config.register( CustomLoggingFilter.class);
+		config.register( CustomLoggingFilter.class);
 	}
 	
 	public static void main(String[] args) throws Exception {
 		Log.setLevel( Level.INFO );
 
-		Token.set( args[0 ] );
+		Token.set( args[0] );
 
 		new DirectoryRestServer(PORT).start();
 	}	

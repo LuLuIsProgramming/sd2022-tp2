@@ -22,9 +22,7 @@ public class SoapFilesClient extends SoapClient implements Files {
 	synchronized private SoapFiles impl() {
 		if (impl == null) {
 			QName QNAME = new QName(SoapFiles.NAMESPACE, SoapFiles.NAME);
-
 			Service service = Service.create(Url.from(super.uri + WSDL), QNAME);
-
 			this.impl = service.getPort(tp1.api.service.soap.SoapFiles.class);
 			super.setTimeouts((BindingProvider) impl);
 		}
@@ -49,10 +47,5 @@ public class SoapFilesClient extends SoapClient implements Files {
 	@Override
 	public Result<Void> deleteUserFiles(String userId, String token) {
 		return super.tryCatchVoid(() -> impl().deleteUserFiles(userId, token));
-	}
-
-	@Override
-	public Result<byte[]> getUrl(String url, String token) {
-		return null;
 	}
 }

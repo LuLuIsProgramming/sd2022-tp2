@@ -9,11 +9,9 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import tp1.api.service.java.Files;
 import tp1.api.service.java.Result;
-import tp1.api.service.java.Result.ErrorCode;
 import tp1.api.service.rest.RestFiles;
 
 public class RestFilesClient extends RestClient implements Files {
-
 
 	private static final String USER = "user";
 
@@ -23,43 +21,42 @@ public class RestFilesClient extends RestClient implements Files {
 	
 	@Override
 	public Result<byte[]> getFile(String fileId, String token) {
-		return Result.error( ErrorCode.NOT_IMPLEMENTED );
+		Response r = target.path(fileId)
+				.queryParam(RestFiles.TOKEN, token)
+				.request()
+				.accept( MediaType.APPLICATION_OCTET_STREAM)
+				.get();
+		return super.responseContents(r, Status.OK, new GenericType<byte[]>() {});
 	}
 
 	@Override
 	public Result<Void> deleteFile(String fileId, String token) {
 		Response r = target.path(fileId)
+				.queryParam(RestFiles.TOKEN, token)
 				.request()
 				.delete();
 		
-		return super.verifyResponse(r, Status.OK);
+		return super.verifyResponse(r, Status.NO_CONTENT);
 	}
 
 	@Override
 	public Result<Void> writeFile(String fileId, byte[] data, String token) {
 		Response r = target.path(fileId)
+				.queryParam(RestFiles.TOKEN, token)
 				.request()
 				.post(Entity.entity(data, MediaType.APPLICATION_OCTET_STREAM));
 		
-		return super.verifyResponse(r, Status.OK);
+		return super.verifyResponse(r, Status.NO_CONTENT);
 	}
 
 	@Override
 	public Result<Void> deleteUserFiles(String userId, String token) {
-		Response r = target.path(USER).path(userId)
+		Response r = target.path(USER)
+				.path(userId)
+				.queryParam(RestFiles.TOKEN, token)
 				.request()
 				.delete();
 		
-		return super.verifyResponse(r, Status.OK);
-	}
-
-	@Override
-	public Result<byte[]> getUrl(String url, String token) {
-		var r = client.target( url )
-				.request()
-				.accept( MediaType.APPLICATION_OCTET_STREAM )
-				.get();
-		System.err.println( r );
-		return super.responseContents(r, Status.OK, new GenericType<byte[]>() {});
-	}
+		return super.verifyResponse(r, Status.NO_CONTENT);
+	}	
 }
