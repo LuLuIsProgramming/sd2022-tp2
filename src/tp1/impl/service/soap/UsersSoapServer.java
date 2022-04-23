@@ -19,7 +19,7 @@ public class UsersSoapServer {
 	private static Logger Log = Logger.getLogger(UsersSoapServer.class.getName());
 
 	public static void main(String[] args) throws Exception {
-		Token.set( args[0 ] );
+		Token.set( args.length > 0 ? args[0] : "" );
 
 //		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
 //		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");

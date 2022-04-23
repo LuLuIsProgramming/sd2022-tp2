@@ -31,7 +31,6 @@ public interface RestFiles {
 	@POST
 	@Path("/{" + FILE_ID + "}")
 	@Consumes(MediaType.APPLICATION_OCTET_STREAM)
-	@Produces(MediaType.APPLICATION_JSON)
 	void writeFile(@PathParam(FILE_ID) String fileId, byte[] data, @QueryParam(TOKEN) @DefaultValue("") String token);
 
 	/**

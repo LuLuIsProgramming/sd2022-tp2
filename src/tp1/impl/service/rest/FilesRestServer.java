@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
+import util.Debug;
 import util.Token;
 
 public class FilesRestServer extends AbstractRestServer {
@@ -27,7 +28,7 @@ public class FilesRestServer extends AbstractRestServer {
 	
 	public static void main(String[] args) throws Exception {
 
-		Log.setLevel( Level.INFO );
+		Debug.setLogLevel( Level.INFO, Debug.TP1);
 		
 		Token.set( args.length == 0 ? "" : args[0] );
 

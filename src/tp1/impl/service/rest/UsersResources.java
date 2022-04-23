@@ -11,7 +11,6 @@ import tp1.api.service.rest.RestUsers;
 import tp1.impl.service.common.JavaUsers;
 
 @Singleton
-@Path(RestUsers.PATH)
 public class UsersResources extends RestResource implements RestUsers {
 	private static Logger Log = Logger.getLogger(UsersResources.class.getName());
 
