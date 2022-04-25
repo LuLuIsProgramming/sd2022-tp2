@@ -1,4 +1,4 @@
-package tp1.impl.service.rest;
+package tp1.impl.service.rest.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

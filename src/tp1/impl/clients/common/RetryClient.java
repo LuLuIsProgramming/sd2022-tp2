@@ -24,22 +24,23 @@ public abstract class RetryClient {
 	protected static final int RETRY_SLEEP = 100;
 	protected static final int MAX_RETRIES = 3;
 
-	// higher order function to retry forever a call until it succeeds
-	// and return an object of some type T to break the loop
 	protected <T> Result<T> reTry(Supplier<Result<T>> func) {
 		return this.reTry(func, MAX_RETRIES);
 	}
 
-	// higher order function to retry forever a call until it succeeds
-	// and return an object of some type T to break the loop
 	protected <T> Result<T> reTry(Supplier<Result<T>> func, int numRetries) {
 		for (int i = 0; i < numRetries; i++)
 			try {
 				return func.get();
-			} catch (Exception x) {
+			} catch (RuntimeException x) {
 				Log.finest(">>>>>>>>Exception: " + x.getMessage() + "\n");
 				Sleep.ms(RETRY_SLEEP);
 			}
+		catch (Exception x) {
+			x.printStackTrace();
+			Log.finest(">>>>>>>>Exception: " + x.getMessage() + "\n");
+			return Result.error(ErrorCode.INTERNAL_ERROR);
+		}
 		return Result.error(ErrorCode.TIMEOUT);
 	}
 }

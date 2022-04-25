@@ -32,6 +32,7 @@ public abstract class AbstractRestServer {
 		
 		registerResources( config );
 		
+		System.err.println(">>>>>" + port );
 		JdkHttpServerFactory.createHttpServer( URI.create(serverURI.replace(ip, "0.0.0.0")), config);
 
 		Log.info(String.format("%s Server ready @ %s\n",  service, serverURI));

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import jakarta.inject.Singleton;
-import jakarta.ws.rs.Path;
 import tp1.api.User;
 import tp1.api.service.java.Users;
 import tp1.api.service.rest.RestUsers;

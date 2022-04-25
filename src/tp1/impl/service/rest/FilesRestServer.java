@@ -5,18 +5,19 @@ import java.util.logging.Logger;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
+import tp1.api.service.java.Files;
+import tp1.impl.service.rest.util.GenericExceptionMapper;
 import util.Debug;
 import util.Token;
 
 public class FilesRestServer extends AbstractRestServer {
 	public static final int PORT = 5678;
-	public static final String SERVICE_NAME = "files";
 	
 	private static Logger Log = Logger.getLogger(FilesRestServer.class.getName());
 
 	
 	FilesRestServer( int port ) {
-		super(Log, SERVICE_NAME, port);
+		super(Log, Files.SERVICE_NAME, port);
 	}
 	
 	@Override

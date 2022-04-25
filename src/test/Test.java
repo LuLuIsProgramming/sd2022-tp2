@@ -5,8 +5,7 @@ import java.util.logging.Level;
 import tp1.api.User;
 import tp1.api.service.java.Directory;
 import tp1.api.service.java.Users;
-import tp1.impl.clients.DirectoryClientFactory;
-import tp1.impl.clients.UsersClientFactory;
+import tp1.impl.clients.Clients;
 import tp1.impl.service.rest.DirectoryRestServer;
 import tp1.impl.service.rest.FilesRestServer;
 import tp1.impl.service.rest.UsersRestServer;
@@ -22,14 +21,14 @@ public class Test {
 		
 		Debug.setLogLevel(Level.INFO, "");
 		
-		Users us = UsersClientFactory.get();
+		Users us = Clients.UsersClients.get();
 		
 		us.createUser( new User("smd", "Sérgio Duarte", "smd@fct.unl.pt", "12345"));
 		us.createUser( new User("nmp", "Nuno Preguiça", "nmp@fct.unl.pt", "54321"));
 		
 		us.searchUsers("").value().forEach( System.out::println );
 		
-		Directory dir = DirectoryClientFactory.get();
+		Directory dir = Clients.DirectoryClients.get();
 		
 		var x1 = dir.writeFile("file1", "xpto1".getBytes(), "simone", "12345");
 		System.err.println( x1 );

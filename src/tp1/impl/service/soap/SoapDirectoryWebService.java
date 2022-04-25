@@ -1,5 +1,7 @@
 package tp1.impl.service.soap;
 
+import static tp1.impl.clients.Clients.FilesClients;
+
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -9,7 +11,6 @@ import tp1.api.service.java.Directory;
 import tp1.api.service.java.Result.ErrorCode;
 import tp1.api.service.soap.DirectoryException;
 import tp1.api.service.soap.SoapDirectory;
-import tp1.impl.clients.FilesClientFactory;
 import tp1.impl.service.common.JavaDirectory;
 
 @WebService(serviceName = SoapDirectory.NAME, targetNamespace = SoapDirectory.NAMESPACE, endpointInterface = SoapDirectory.INTERFACE)
@@ -66,7 +67,7 @@ public class SoapDirectoryWebService extends SoapWebService implements SoapDirec
 		var res = impl.getFile(filename, userId, accUserId, password);
 		if( res.error() == ErrorCode.REDIRECT) {
 			String location = res.errorValue();
-			res = FilesClientFactory.getByUrl( location ).getFile( JavaDirectory.fileId(filename, userId), password);
+			res = FilesClients.get( location ).getFile( JavaDirectory.fileId(filename, userId), password);
 		}
 		return super.resultOrThrow(res, DirectoryException::new);
 	}

@@ -1,5 +1,7 @@
 package tp1.impl.service.rest;
 
+import static tp1.impl.clients.Clients.FilesClients;
+
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -8,7 +10,6 @@ import tp1.api.FileInfo;
 import tp1.api.service.java.Directory;
 import tp1.api.service.java.Result.ErrorCode;
 import tp1.api.service.rest.RestDirectory;
-import tp1.impl.clients.FilesClientFactory;
 import tp1.impl.service.common.JavaDirectory;
 
 @Singleton
@@ -60,12 +61,12 @@ public class DirectoryResources extends RestResource implements RestDirectory {
 				userId, accUserId, password));
 
 		var res = impl.getFile(filename, userId, accUserId, password);
-		if( res.error() == ErrorCode.REDIRECT) {
+		if (res.error() == ErrorCode.REDIRECT) {
 			String location = res.errorValue();
-			if( ! location.contains(REST)) 
-				res = FilesClientFactory.getByUrl( location ).getFile( JavaDirectory.fileId(filename, userId), password);
+			if (!location.contains(REST))
+				res = FilesClients.get(location).getFile(JavaDirectory.fileId(filename, userId), password);
 		}
-		return super.resultOrThrow( res );
+		return super.resultOrThrow(res);
 
 	}
 

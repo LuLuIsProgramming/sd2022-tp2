@@ -6,6 +6,8 @@ import static tp1.api.service.java.Result.redirect;
 import static tp1.api.service.java.Result.ErrorCode.BAD_REQUEST;
 import static tp1.api.service.java.Result.ErrorCode.FORBIDDEN;
 import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
+import static tp1.impl.clients.Clients.FilesClients;
+import static tp1.impl.clients.Clients.UsersClients;
 
 import java.net.URI;
 import java.util.ArrayDeque;
@@ -27,8 +29,6 @@ import tp1.api.User;
 import tp1.api.service.java.Directory;
 import tp1.api.service.java.Result;
 import tp1.api.service.java.Result.ErrorCode;
-import tp1.impl.clients.FilesClientFactory;
-import tp1.impl.clients.UsersClientFactory;
 import util.Token;
 
 public class JavaDirectory implements Directory {
@@ -36,8 +36,7 @@ public class JavaDirectory implements Directory {
 	private static final long USER_CACHE_CAPACITY = 32;
 	private static final long USER_CACHE_EXPIRATION = 500;
 
-	private static Logger Log = Logger.getLogger(JavaDirectory.class.getName());
-
+	private final static Logger Log = Logger.getLogger(JavaDirectory.class.getName());
 	private final ExecutorService executor = Executors.newCachedThreadPool();
 
 	final Map<String, ExtendedFileInfo> files = new ConcurrentHashMap<>();
@@ -60,8 +59,7 @@ public class JavaDirectory implements Directory {
 			var file = files.get(fileId);
 			var info = file != null ? file.info() : new FileInfo();
 			for (var uri :  orderCandidateFileServers(file)) {
-				System.err.println("Trying: " +  uri );
-				var result = FilesClientFactory.getByUri(uri).writeFile(fileId, data, Token.get());
+				var result = FilesClients.get(uri).writeFile(fileId, data, Token.get());
 				if (result.isOK()) {
 					info.setOwner(userId);
 					info.setFilename(filename);
@@ -100,7 +98,7 @@ public class JavaDirectory implements Directory {
 
 			executor.execute(() -> {
 				this.removeSharesOfFile(info);
-				FilesClientFactory.getByUri(file.uri()).deleteFile(fileId, password);
+				FilesClients.get(file.uri()).deleteFile(fileId, password);
 			});
 			
 			getFileCounts(info.uri(), false).numFiles().decrementAndGet();
@@ -203,7 +201,7 @@ public class JavaDirectory implements Directory {
 	}
 
 	private Result<User> getUser(String userId, String password) {
-		var res = UsersClientFactory.get().getUser( userId, password );
+		var res = UsersClients.get().getUser( userId, password );
 		if( res.error() == ErrorCode.TIMEOUT)
 			return error(BAD_REQUEST);
 		else
@@ -236,7 +234,7 @@ public class JavaDirectory implements Directory {
 		if( file != null )
 			result.add( file.uri() );
 
-		FilesClientFactory.all()
+		FilesClients.all()
 				.stream()
 				.filter( u -> ! result.contains(u))
 				.map(u -> getFileCounts(u, false))

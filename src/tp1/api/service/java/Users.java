@@ -5,6 +5,7 @@ import java.util.List;
 import tp1.api.User;
 
 public interface Users {
+	public static String SERVICE_NAME = "users";
 
 	Result<String> createUser(User user);
 	
