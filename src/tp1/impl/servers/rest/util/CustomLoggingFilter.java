@@ -26,7 +26,7 @@ public class CustomLoggingFilter implements ContainerRequestFilter, ContainerRes
 		Log.info("HTTP REQUEST : " + sb.toString());
 	}
 
-	private String getEntityBody(ContainerRequestContext requestContext) {
+	String getEntityBody(ContainerRequestContext requestContext) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = requestContext.getEntityStream();
 
