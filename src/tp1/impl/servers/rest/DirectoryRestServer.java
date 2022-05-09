@@ -11,13 +11,13 @@ import util.Debug;
 import util.Token;
 
 public class DirectoryRestServer extends AbstractRestServer {
+	
 	public static final int PORT = 4567;
 	
 	private static Logger Log = Logger.getLogger(DirectoryRestServer.class.getName());
 
-	
-	DirectoryRestServer( int port ) {
-		super(Log, Directory.SERVICE_NAME, port);
+	DirectoryRestServer() {
+		super(Log, Directory.SERVICE_NAME, PORT);
 	}
 	
 	@Override
@@ -33,6 +33,6 @@ public class DirectoryRestServer extends AbstractRestServer {
 
 		Token.set( args.length > 0 ? args[0] : "");
 
-		new DirectoryRestServer(PORT).start();
+		new DirectoryRestServer().start();
 	}	
 }
