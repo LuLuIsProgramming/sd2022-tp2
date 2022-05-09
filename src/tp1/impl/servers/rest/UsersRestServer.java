@@ -16,8 +16,8 @@ public class UsersRestServer extends AbstractRestServer {
 	
 	private static Logger Log = Logger.getLogger(UsersRestServer.class.getName());
 
-	UsersRestServer( int port ) {
-		super( Log, Users.SERVICE_NAME, port);
+	UsersRestServer() {
+		super( Log, Users.SERVICE_NAME, PORT);
 	}
 	
 	
@@ -35,6 +35,6 @@ public class UsersRestServer extends AbstractRestServer {
 		
 		Token.set( args.length == 0 ? "" : args[0] );
 		
-		new UsersRestServer(PORT).start();
+		new UsersRestServer().start();
 	}	
 }
