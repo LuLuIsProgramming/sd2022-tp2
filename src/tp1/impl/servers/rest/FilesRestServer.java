@@ -16,8 +16,8 @@ public class FilesRestServer extends AbstractRestServer {
 	private static Logger Log = Logger.getLogger(FilesRestServer.class.getName());
 
 	
-	FilesRestServer( int port ) {
-		super(Log, Files.SERVICE_NAME, port);
+	FilesRestServer() {
+		super(Log, Files.SERVICE_NAME, PORT);
 	}
 	
 	@Override
@@ -33,6 +33,6 @@ public class FilesRestServer extends AbstractRestServer {
 		
 		Token.set( args.length == 0 ? "" : args[0] );
 
-		new FilesRestServer(PORT).start();
+		new FilesRestServer().start();
 	}	
 }
