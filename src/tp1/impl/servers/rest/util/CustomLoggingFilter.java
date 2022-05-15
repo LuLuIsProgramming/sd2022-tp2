@@ -1,4 +1,4 @@
-package tp1.impl.service.rest;
+package tp1.impl.servers.rest.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,12 +8,10 @@ import java.util.logging.Logger;
 
 import org.glassfish.jersey.message.internal.ReaderWriter;
 
-import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
-import jakarta.ws.rs.core.MediaType;
 
 public class CustomLoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {
 	private static Logger Log = Logger.getLogger(CustomLoggingFilter.class.getName());
@@ -23,11 +21,12 @@ public class CustomLoggingFilter implements ContainerRequestFilter, ContainerRes
 		StringBuilder sb = new StringBuilder();
 		sb.append(" - Path: ").append(requestContext.getUriInfo().getPath());
 		sb.append(" - Header: ").append(requestContext.getHeaders());
-		sb.append(" - Entity: ").append(getEntityBody(requestContext));
+//		sb.append(" - Entity: ").append(getEntityBody(requestContext));
+		sb.append("\n");
 		Log.info("HTTP REQUEST : " + sb.toString());
 	}
 
-	private String getEntityBody(ContainerRequestContext requestContext) {
+	String getEntityBody(ContainerRequestContext requestContext) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = requestContext.getEntityStream();
 
@@ -55,8 +54,9 @@ public class CustomLoggingFilter implements ContainerRequestFilter, ContainerRes
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Header: ").append(responseContext.getHeaders());
-		sb.append(" - Entity: ").append(Entity.entity(responseContext.getEntity(), MediaType.APPLICATION_JSON));
-		Log.info("HTTP RESPONSE : " + sb.toString());
+//		sb.append(" - Entity: ").append(Entity.entity(responseContext.getEntity(), MediaType.APPLICATION_JSON));
+		sb.append("\n");
+		Log.info("HTTP RESPONSE : " + responseContext.getStatus() + " " + sb.toString());
 	}
 
 }

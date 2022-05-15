@@ -1,4 +1,4 @@
-package tp1.impl.service.common;
+package tp1.impl.servers.common;
 
 import static tp1.api.service.java.Result.error;
 import static tp1.api.service.java.Result.ok;
@@ -6,6 +6,8 @@ import static tp1.api.service.java.Result.ErrorCode.BAD_REQUEST;
 import static tp1.api.service.java.Result.ErrorCode.CONFLICT;
 import static tp1.api.service.java.Result.ErrorCode.FORBIDDEN;
 import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
+import static tp1.impl.clients.Clients.DirectoryClients;
+import static tp1.impl.clients.Clients.FilesClients;
 
 import java.util.List;
 import java.util.Map;
@@ -16,8 +18,6 @@ import java.util.concurrent.Executors;
 import tp1.api.User;
 import tp1.api.service.java.Result;
 import tp1.api.service.java.Users;
-import tp1.impl.clients.DirectoryClientFactory;
-import tp1.impl.clients.FilesClientFactory;
 import util.Token;
 
 public class JavaUsers implements Users {
@@ -83,9 +83,9 @@ public class JavaUsers implements Users {
 		else {
 			users.remove(userId);
 			executor.execute(()->{
-				DirectoryClientFactory.get().deleteUserFiles(userId, password, Token.get());
-				for( var fc : FilesClientFactory.all())
-					fc.deleteUserFiles( userId, password);
+				DirectoryClients.get().deleteUserFiles(userId, password, Token.get());
+				for( var uri : FilesClients.all())
+					FilesClients.get(uri).deleteUserFiles( userId, password);
 			});
 			return ok(user);
 		}

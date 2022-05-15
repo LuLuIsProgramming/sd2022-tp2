@@ -1,21 +1,23 @@
-package tp1.impl.service.rest;
+package tp1.impl.servers.rest;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
+import tp1.api.service.java.Users;
+import tp1.impl.servers.rest.util.GenericExceptionMapper;
+import util.Debug;
 import util.Token;
 
 
 public class UsersRestServer extends AbstractRestServer {
 	public static final int PORT = 3456;
-	public static final String SERVICE_NAME = "users";
 	
 	private static Logger Log = Logger.getLogger(UsersRestServer.class.getName());
 
-	UsersRestServer( int port ) {
-		super( Log, SERVICE_NAME, port);
+	UsersRestServer() {
+		super( Log, Users.SERVICE_NAME, PORT);
 	}
 	
 	
@@ -29,10 +31,10 @@ public class UsersRestServer extends AbstractRestServer {
 	
 	public static void main(String[] args) throws Exception {
 
-		Log.setLevel( Level.INFO );
+		Debug.setLogLevel( Level.INFO, Debug.TP1);
 		
-		Token.set( args[0 ] );
+		Token.set( args.length == 0 ? "" : args[0] );
 		
-		new UsersRestServer(PORT).start();
+		new UsersRestServer().start();
 	}	
 }

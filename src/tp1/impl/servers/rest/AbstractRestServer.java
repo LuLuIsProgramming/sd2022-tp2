@@ -1,4 +1,4 @@
-package tp1.impl.service.rest;
+package tp1.impl.servers.rest;
 
 import java.net.URI;
 import java.util.logging.Logger;
@@ -7,20 +7,15 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import tp1.impl.discovery.Discovery;
+import tp1.impl.servers.common.AbstractServer;
 import util.IP;
 
-public abstract class AbstractRestServer {
+public abstract class AbstractRestServer extends AbstractServer {
 	
 	protected static String SERVER_BASE_URI = "http://%s:%s/rest";
-
-	final int port;
-	final String service;
-	final private Logger Log;
 	
 	protected AbstractRestServer(Logger log, String service, int port) {
-		this.service = service;
-		this.port = port;
-		this.Log = log;
+		super(log, service, port);
 	}
 
 
@@ -32,18 +27,12 @@ public abstract class AbstractRestServer {
 		
 		registerResources( config );
 		
-		JdkHttpServerFactory.createHttpServer( URI.create(serverURI.replace(ip, "0.0.0.0")), config);
+		JdkHttpServerFactory.createHttpServer( URI.create(serverURI.replace(ip, INETADDR_ANY)), config);
 
 		Log.info(String.format("%s Server ready @ %s\n",  service, serverURI));
 		
 		Discovery.getInstance().announce(service, serverURI);
-
 	}
 	
 	abstract void registerResources( ResourceConfig config );
-	
-	static {
-		System.setProperty("java.net.preferIPv4Stack", "true");
-		System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s: %5$s");
-	}
 }

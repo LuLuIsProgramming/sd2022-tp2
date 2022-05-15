@@ -23,17 +23,13 @@ public class RetryFilesClient extends RetryClient implements Files {
 
 	@Override
 	public Result<Void> writeFile(String fileId, byte[] data, String token) {
-		return reTry( () -> impl.writeFile(fileId, data, token));
+		// We do not retry this operation more than once, here...
+		// In case of timeout, directory needs to try another server instead.
+		return reTry( () -> impl.writeFile(fileId, data, token), 1);
 	}
 
 	@Override
 	public Result<Void> deleteUserFiles(String userId, String token) {
 		return reTry( () -> impl.deleteUserFiles(userId, token));
-	}
-
-	@Override
-	public Result<byte[]> getUrl(String url, String token) {
-		return reTry( () -> impl.getUrl(url, token));
-	}
-	
+	}	
 }

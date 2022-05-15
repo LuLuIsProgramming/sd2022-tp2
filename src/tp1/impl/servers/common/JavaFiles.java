@@ -1,10 +1,9 @@
-package tp1.impl.service.common;
+package tp1.impl.servers.common;
 
 import static tp1.api.service.java.Result.error;
 import static tp1.api.service.java.Result.ok;
 import static tp1.api.service.java.Result.ErrorCode.INTERNAL_ERROR;
 import static tp1.api.service.java.Result.ErrorCode.NOT_FOUND;
-import static tp1.api.service.java.Result.ErrorCode.NOT_IMPLEMENTED;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,8 +61,7 @@ public class JavaFiles implements Files {
 		return ok();
 	}
 
-	@Override
-	public Result<byte[]> getUrl(String url, String token) {
-		return error( NOT_IMPLEMENTED );
-	}	
+	public static String fileId(String filename, String userId) {
+		return userId + JavaFiles.DELIMITER + filename;
+	}
 }

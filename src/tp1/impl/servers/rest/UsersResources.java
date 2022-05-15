@@ -1,17 +1,15 @@
-package tp1.impl.service.rest;
+package tp1.impl.servers.rest;
 
 import java.util.List;
 import java.util.logging.Logger;
 
 import jakarta.inject.Singleton;
-import jakarta.ws.rs.Path;
 import tp1.api.User;
 import tp1.api.service.java.Users;
 import tp1.api.service.rest.RestUsers;
-import tp1.impl.service.common.JavaUsers;
+import tp1.impl.servers.common.JavaUsers;
 
 @Singleton
-@Path(RestUsers.PATH)
 public class UsersResources extends RestResource implements RestUsers {
 	private static Logger Log = Logger.getLogger(UsersResources.class.getName());
 
