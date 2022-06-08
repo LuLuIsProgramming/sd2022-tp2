@@ -10,7 +10,7 @@ public class FilesDropboxResources extends RestResource implements RestFiles {
 	public static final int PORT = 5678;
 
 	private static Logger Log = Logger.getLogger(FilesRestServer.class.getName());
-
+	private static String ROOT = "/root";
 
 	private static final int HTTP_SUCCESS = 200;
 	private static final String CONTENT_TYPE_HDR = "Content-Type";
@@ -23,7 +23,7 @@ public class FilesDropboxResources extends RestResource implements RestFiles {
 	@Override
 	public void writeFile(String fileId, byte[] data, String token) {
 		try {
-			client.upload(fileId, data);
+			client.upload(ROOT + fileId, data);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -32,7 +32,7 @@ public class FilesDropboxResources extends RestResource implements RestFiles {
 	@Override
 	public void deleteFile(String fileId, String token) {
 		try {
-			client.delete(fileId);
+			client.delete(ROOT + fileId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -41,7 +41,7 @@ public class FilesDropboxResources extends RestResource implements RestFiles {
 	@Override
 	public byte[] getFile(String fileId, String token) {
 		try {
-			return client.download(fileId).value();
+			return client.download(ROOT + fileId).value();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

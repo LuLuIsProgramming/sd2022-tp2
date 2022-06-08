@@ -11,7 +11,9 @@ import jakarta.ws.rs.core.GenericType;
 import org.pac4j.scribe.builder.api.DropboxApi20;
 import tp1.api.service.java.Result;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
 
 public class RestDropboxClient extends RestClient {
 
@@ -20,7 +22,6 @@ public class RestDropboxClient extends RestClient {
     private static final String accessTokenStr = "sl.BI_w56F8Th8Zrr3ln3oudKpm9-qbndmxqTiIpzJCIrPfBYFhmLWscCqniSPIjDeUo8yBOKav4oKkJ7TeQwyUN6Vx80sske_eXvIinpVoN5ib8qK6Te3-7wC9x-2ep_sN1DixYgc";
 
 
-    private static final String CREATE_FOLDER_V2_URL = "https://api.dropboxapi.com/2/files/create_folder_v2";
     private static final String UPLOAD_FILE_URL = "https://api.dropboxapi.com/2/files/upload";
     private static final String DOWNLOAD_FILE_URL = "https://api.dropboxapi.com/2/files/create_folder_v2";
     private static final String DELETE_FILE_V2_URL = "https://api.dropboxapi.com/2/files/delete_v2";
@@ -50,10 +51,22 @@ public class RestDropboxClient extends RestClient {
         uploadFile.setPayload(data);
         service.signRequest(accessToken, uploadFile);
 
-        Response r = service.execute(uploadFile);
-        if (r.getCode() != HTTP_SUCCESS)
+        //
+        return reTry(() -> {
+            try {
+                Response r = service.execute(uploadFile);
+                if (r.getCode() != HTTP_SUCCESS)
+                    return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+                return Result.ok();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return Result.error(Result.ErrorCode.INTERNAL_ERROR);
-        return Result.ok();
+        });
     }
 
     public Result<byte[]> download(String fileId) throws Exception{
@@ -62,10 +75,21 @@ public class RestDropboxClient extends RestClient {
         downloadFile.setPayload(json.toJson(new DeleteArg(fileId)));
         service.signRequest(accessToken, downloadFile);
 
-        Response r = service.execute(downloadFile);
-        if (r.getCode() != HTTP_SUCCESS)
+        return reTry(() -> {
+            try {
+                Response r = service.execute(downloadFile);
+                if (r.getCode() != HTTP_SUCCESS)
+                    return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+                return Result.ok(r.getStream().readAllBytes());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return Result.error(Result.ErrorCode.INTERNAL_ERROR);
-        return Result.ok(r.getStream().readAllBytes());
+        });
     }
 
     public Result<Void> delete(String fileId) throws Exception{
@@ -75,10 +99,22 @@ public class RestDropboxClient extends RestClient {
         deleteFile.setPayload(json.toJson(new DeleteArg(fileId)));
         service.signRequest(accessToken, deleteFile);
 
-        Response r = service.execute(deleteFile);
-        if (r.getCode() != HTTP_SUCCESS)
+        return reTry(() -> {
+            try {
+                Response r = service.execute(deleteFile);
+                if (r.getCode() != HTTP_SUCCESS)
+                    return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+                return Result.ok();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return Result.error(Result.ErrorCode.INTERNAL_ERROR);
-        return Result.ok();
+        });
+
     }
 }
 

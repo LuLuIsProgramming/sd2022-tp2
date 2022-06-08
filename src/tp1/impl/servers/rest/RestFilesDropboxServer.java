@@ -1,6 +1,7 @@
 package tp1.impl.servers.rest;
 
 import org.glassfish.jersey.server.ResourceConfig;
+import tp1.api.service.java.Files;
 import tp1.impl.servers.rest.util.GenericExceptionMapper;
 import util.Debug;
 import util.Token;
@@ -32,7 +33,7 @@ public class RestFilesDropboxServer extends AbstractRestServer{
 
         Token.set( args.length == 0 ? "" : args[0] );
 
-        new RestFilesDropboxServer(Log, "dropbox", PORT).start();
+        new RestFilesDropboxServer(Log, Files.SERVICE_NAME, PORT).start();
     }
 
 
