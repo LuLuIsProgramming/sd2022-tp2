@@ -4,6 +4,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import tp1.api.service.java.Files;
 import tp1.impl.servers.rest.util.GenericExceptionMapper;
 import util.Debug;
+import util.Flag;
 import util.Token;
 
 import java.util.logging.Level;
@@ -29,9 +30,16 @@ public class RestFilesDropboxServer extends AbstractRestServer{
 
     public static void main(String[] args) throws Exception {
 
+        /*if(args[0].equalsIgnoreCase("true"))
+            Flag.set(true);
+        else
+            Flag.set(false);*/
+        Flag.set(Boolean.parseBoolean(args[0]));
+
+
         Debug.setLogLevel( Level.INFO, Debug.TP1);
 
-        Token.set( args.length == 0 ? "" : args[0] );
+        Token.set( args.length <= 1 ? "" : args[1] );
 
         new RestFilesDropboxServer(Log, Files.SERVICE_NAME, PORT).start();
     }

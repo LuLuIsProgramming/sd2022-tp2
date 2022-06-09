@@ -18,6 +18,8 @@ import tp1.api.service.java.Result;
 import tp1.api.service.java.Result.ErrorCode;
 import tp1.impl.clients.common.RetryClient;
 
+import javax.net.ssl.HttpsURLConnection;
+
 /**
  * 
  * Shared behavior among REST clients.

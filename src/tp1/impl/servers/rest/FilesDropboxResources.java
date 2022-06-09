@@ -1,29 +1,34 @@
 package tp1.impl.servers.rest;
 
+import jakarta.inject.Singleton;
 import tp1.api.service.rest.RestFiles;
 import tp1.impl.clients.rest.RestDropboxClient;
+import util.Flag;
 
 import java.util.logging.Logger;
 
+@Singleton
 public class FilesDropboxResources extends RestResource implements RestFiles {
 
 	public static final int PORT = 5678;
 
+	private static final String DELIMITER = "$$$";
+
 	private static Logger Log = Logger.getLogger(FilesRestServer.class.getName());
 	private static String ROOT = "/root";
 
-	private static final int HTTP_SUCCESS = 200;
-	private static final String CONTENT_TYPE_HDR = "Content-Type";
 	private RestDropboxClient client;
 		
 	public FilesDropboxResources() {
-		client = new RestDropboxClient(null, "literally who");
+		client = new RestDropboxClient();
+		if(Flag.get())
+			deleteFile("", "");
 	}
 
 	@Override
 	public void writeFile(String fileId, byte[] data, String token) {
 		try {
-			client.upload(ROOT + fileId, data);
+			client.writeFile(ROOT + "/" + fileId.replace(DELIMITER, "/"), data, "");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -32,7 +37,10 @@ public class FilesDropboxResources extends RestResource implements RestFiles {
 	@Override
 	public void deleteFile(String fileId, String token) {
 		try {
-			client.delete(ROOT + fileId);
+			if(!fileId.equals(""))
+				client.deleteFile(ROOT + "/" + fileId.replace(DELIMITER, "/"), "");
+			else
+				client.deleteFile(ROOT, "");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -40,16 +48,15 @@ public class FilesDropboxResources extends RestResource implements RestFiles {
 
 	@Override
 	public byte[] getFile(String fileId, String token) {
-		try {
-			return client.download(ROOT + fileId).value();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		return resultOrThrow(client.getFile(ROOT + "/" + fileId.replace(DELIMITER, "/"), token));
 	}
 
 	@Override
 	public void deleteUserFiles(String userId, String token) {
-
+		try {
+			client.deleteUserFiles(ROOT + "/" + userId, token);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

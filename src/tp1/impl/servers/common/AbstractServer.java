@@ -1,5 +1,8 @@
 package tp1.impl.servers.common;
 
+import util.InsecureHostnameVerifier;
+
+import javax.net.ssl.HttpsURLConnection;
 import java.util.logging.Logger;
 
 public abstract class AbstractServer {
@@ -13,6 +16,7 @@ public abstract class AbstractServer {
 		this.service = service;
 		this.port = port;
 		this.Log = log;
+		HttpsURLConnection.setDefaultHostnameVerifier(new InsecureHostnameVerifier());
 	}
 	
 	abstract protected void start();

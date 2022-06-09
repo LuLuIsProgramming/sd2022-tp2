@@ -59,6 +59,7 @@ public class JavaDirectory implements Directory {
 	final Map<String, ExtendedFileInfo> files = new ConcurrentHashMap<>();
 	final Map<String, UserFiles> userFiles = new ConcurrentHashMap<>();
 	final Map<URI, FileCounts> fileCounts = new ConcurrentHashMap<>();
+	final Map<String, URI[]> fileLocations = new ConcurrentHashMap<>();
 	
 	@Override
 	public Result<FileInfo> writeFile(String filename, byte[] data, String userId, String password) {
@@ -75,13 +76,23 @@ public class JavaDirectory implements Directory {
 			var fileId = fileId(filename, userId);
 			var file = files.get(fileId);
 			var info = file != null ? file.info() : new FileInfo();
-			for (var uri :  orderCandidateFileServers(file)) {
+			var counter = 0;
+			var queue = orderCandidateFileServers(file);
+			for (var uri : queue) {
 				var result = FilesClients.get(uri).writeFile(fileId, data, Token.get());
-				if (result.isOK()) {
+				if (result.isOK() ) {
+					counter++;
+					var uris = fileLocations.putIfAbsent(filename, new URI[2]);
+					uris[counter - 1] = uri;
+					if(counter < 2 && queue.size() > 1)
+						continue;
+
+
 					info.setOwner(userId);
 					info.setFilename(filename);
 					info.setFileURL(String.format("%s/files/%s", uri, fileId));
 					files.put(fileId, file = new ExtendedFileInfo(uri, fileId, info));
+
 					if( uf.owned().add(fileId))
 						getFileCounts(file.uri(), true).numFiles().incrementAndGet();
 					return ok(file.info());
@@ -188,7 +199,10 @@ public class JavaDirectory implements Directory {
 		if (!file.info().hasAccess(accUserId))
 			return error(FORBIDDEN);
 		
-		return redirect( file.info().getFileURL() );
+		Result<byte[]> result = redirect( file.info().getFileURL() );
+		if(result.isOK())
+			return result;
+		return redirect( fileLocations.get(filename)[1].toString() );
 	}
 
 	@Override
